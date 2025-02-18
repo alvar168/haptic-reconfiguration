@@ -6,10 +6,10 @@ This is the repo for the Mechanical and Algorithmic Reconfiguration of Soft Hapt
 `main.py` script has instructions and can be used with joystick inputs to record robot data.
 
 Test the following:
-    - Potential typos/bugs
-    - Backdriving and Guiding modes on FCI
-    - Joystick inputs functionality
-    - Data Recording
+- Potential typos/bugs
+- Backdriving and Guiding modes on FCI
+- Joystick inputs functionality
+- Data Recording
 
 
 ## For Soheil:
