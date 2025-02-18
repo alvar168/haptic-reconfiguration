@@ -44,6 +44,7 @@ target = np.random.uniform([limit_x[0], limit_y[0], limit_z[0]], [limit_x[1], li
 def main(save_path, num):
 	'''
 	Instructions:
+	
 		- Connect to robot (no gripper) and joystick
 		- Switch off Execution mode on Franka Desk
 		- Use preferred Guiding mode (optional)
