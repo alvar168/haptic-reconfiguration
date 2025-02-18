@@ -4,7 +4,8 @@ This is the repo for the Mechanical and Algorithmic Reconfiguration of Soft Hapt
 
 ## For Soheil:
 We need:
-- A script structure that allow a user to move the robot to find target positions.
+- A script structure that allow a user to move the robot to find target positions.:heavy_check_mark: Task Completed
+
 - The target positions are predetermined from a list, and are likely defined as (x,y) coords, but (x,y,z) works as well.
 - The user would start from the home position (we can redefine home later). When the "game" starts, the robot is backdrivable and the user moves.
 - We then grab the position of the end effector in real time to calculation euclidean distance to the target. Based on this distance, we send information to an Arduino controlling the pneumatics.
