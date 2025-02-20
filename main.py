@@ -99,7 +99,7 @@ def main(save_path, num):
 				print("---Saved Recording")
 				shutdown = True
 
-	print(data["xyz_euler"])
+	print("[*] Recorded data:\n", data["xyz_euler"])
 
 
 
