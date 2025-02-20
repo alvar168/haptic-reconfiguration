@@ -97,10 +97,6 @@ def main(save_path, num):
 				with open(save_path + "/dem_" + str(num+1) + ".pkl", "wb") as file:
 					pickle.dump(data, file)
 				print("---Saved Recording")
-				
-			if Y_pressed:
-				print('---Robot Returing Home...', '\n')
-				Robot.go2home(conn_robot)
 				shutdown = True
 
 	print(data["xyz_euler"])
