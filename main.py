@@ -22,14 +22,12 @@ Functionalities defined in this script:
 ## initialize robot
 Robot = Franka3()
 print('[*] Connecting to robot...')
-conn_robot = Robot.connect2robot()
+conn_robot = Robot.connect2robot(mode="d")
 print('    Successfully connected')
 
 ## initialize joystick
 joystick = JoystickControl()
 
-## send robot home
-Robot.go2home(conn_robot)
 
 ## target positions
 with open('config.yaml', 'r') as ymlfile:
@@ -72,6 +70,7 @@ def main(save_path, num):
 		## read robot states
 		states = Robot.readState(conn_robot)
 		q, xyz_euler = states["q"], states["xyz_euler"]
+		print(f"XYZ Position: {xyz_euler[:3]}")
 
 		## read joystick commands
 		A_pressed, B_pressed, X_pressed, Y_pressed, _, _ = joystick.getInput()
@@ -81,7 +80,7 @@ def main(save_path, num):
 			data["joint_positions"].append(q)
 			data["xyz_euler"].append(xyz_euler)
 			data["target"].append(target)
-			data["distance"].append(np.lingalg.norm(target - xyz_euler[:3]))
+			data["distance"].append(np.linalg.norm(target - xyz_euler[:3]))
 
 			if B_pressed and (time.time() - last_time > step_time):
 				print("---Finished Recording")
@@ -104,7 +103,7 @@ def main(save_path, num):
 				Robot.go2home(conn_robot)
 				shutdown = True
 
-
+	print(data["xyz_euler"])
 
 
 
