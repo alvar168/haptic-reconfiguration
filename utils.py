@@ -73,7 +73,7 @@ class Franka3(object):
 		s.bind(('172.16.0.3', PORT))
 		s.listen()
 		conn, addr = s.accept()
-		self.send2robot(conn, [0]*7, mode=mode)
+		self.send2robot(conn, [0]*7, mode)
 		return conn
 
 	def connect2gripper(self, PORT=8081):
