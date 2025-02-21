@@ -29,31 +29,26 @@ print('    Successfully connected')
 joystick = JoystickControl()
 
 
-## target positions
-with open('config.yaml', 'r') as ymlfile:
-	cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
-limit_x = cfg['workspace']['LIMIT_X']
-limit_y = cfg['workspace']['LIMIT_Y']
-limit_z = cfg['workspace']['LIMIT_Z']
-target = np.random.uniform([limit_x[0], limit_y[0], limit_z[0]], [limit_x[1], limit_y[1], limit_z[1]], 3)
+
+def loadTargets() -> np.ndarray:
+	with open('targets.pkl', 'rb') as f:
+		targets = pickle.load(f)
+	return targets
 
 
 
-def main(save_path, num):
+def main(save_path: str, num: int, target: np.array, thresh: float=0.05):
 	'''
 	Instructions:
 	
 		- Connect to robot (no gripper) and joystick
-		- Switch off Execution mode on Franka Desk
 		- Use preferred Guiding mode (optional)
 		- Press A to start recording data
 		- User moves the robot based on haptic feedback (yet to be implemented)
 		- Press B to finish recording data
 		- Press X to save recording data
-		- Press Y to send robot home
-	
-	** this process actually repeates for "num" times
 	'''
+
 	## parameters	
 	record = False
 	shutdown = False
@@ -70,7 +65,10 @@ def main(save_path, num):
 		## read robot states
 		states = Robot.readState(conn_robot)
 		q, xyz_euler = states["q"], states["xyz_euler"]
-		print(f"XYZ Position: {xyz_euler[:3]}")
+		distance = np.linalg.norm(target[:2] - xyz_euler[:2])
+		if distance <= thresh:
+			print("---- Reached to target!!")
+		# print(f"XYZ Position: {xyz_euler[:3]}")
 
 		## read joystick commands
 		A_pressed, B_pressed, X_pressed, Y_pressed, _, _ = joystick.getInput()
@@ -80,7 +78,7 @@ def main(save_path, num):
 			data["joint_positions"].append(q)
 			data["xyz_euler"].append(xyz_euler)
 			data["target"].append(target)
-			data["distance"].append(np.linalg.norm(target - xyz_euler[:3]))
+			data["distance"].append(distance)
 
 			if B_pressed and (time.time() - last_time > step_time):
 				print("---Finished Recording")
@@ -105,18 +103,18 @@ def main(save_path, num):
 
 if __name__=="__main__": 
 	"""
-	You can set name and number of recordings as input arguments in terminal
+	You can set name of recordings as input arguments in terminal
 	"""
 
 	parser = argparse.ArgumentParser(description='Collecting user data')
 	parser.add_argument('--name', help='choose folder name', type=str, default="none")
-	parser.add_argument('--num', help='how many demonstrations?', type=str, default="1")
 	args = parser.parse_args()
 
-	for num in range(int(args.num)):
+	targets = loadTargets()
+
+	for num, target in enumerate(targets):
 		print("[*] Recording ", num + 1)
-		## saving directory			
 		save_path = "user_data/{}/".format(args.name)
 		if not os.path.exists(save_path):
 			os.makedirs(save_path)
-		main(save_path, num)
+		main(save_path, num + 1, target)
