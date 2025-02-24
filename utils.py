@@ -67,13 +67,12 @@ class Franka3(object):
 		self.home_pose = self.wrappedPose(HOME)
 
 
-	def connect2robot(self, mode="v", PORT=8080):
+	def connect2robot(self, PORT=8080):
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		s.bind(('172.16.0.3', PORT))
 		s.listen()
 		conn, addr = s.accept()
-		self.send2robot(conn, [0]*7, mode)
 		return conn
 
 	def connect2gripper(self, PORT=8081):

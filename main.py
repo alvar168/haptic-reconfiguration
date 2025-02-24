@@ -22,8 +22,12 @@ Functionalities defined in this script:
 ## initialize robot
 Robot = Franka3()
 print('[*] Connecting to robot...')
-conn_robot = Robot.connect2robot(mode="d")
+conn_robot = Robot.connect2robot()
 print('    Successfully connected')
+
+## send robot home
+print('    Sending robot home')
+Robot.go2home(conn_robot)
 
 ## initialize joystick
 joystick = JoystickControl()
@@ -40,19 +44,22 @@ def loadTargets() -> np.ndarray:
 def main(save_path: str, num: int, target: np.array, thresh: float=0.05):
 	'''
 	Instructions:
-	
 		- Connect to robot (no gripper) and joystick
-		- Use preferred Guiding mode (optional)
 		- Press A to start recording data
+		- Switch to `Programming` mode
 		- User moves the robot based on haptic feedback (yet to be implemented)
+		- Switch to `Execution` mode
 		- Press B to finish recording data
 		- Press X to save recording data
+		- Press Y to to return the robot home
+
 	'''
 
 	## parameters	
 	record = False
 	shutdown = False
 	step_time = 0.1
+	mode = "v"
 
 	data = {"target":[],
 		 	"distance":[],
@@ -68,7 +75,6 @@ def main(save_path: str, num: int, target: np.array, thresh: float=0.05):
 		distance = np.linalg.norm(target[:2] - xyz_euler[:2])
 		if distance <= thresh:
 			print("---- Reached to target!!")
-		# print(f"XYZ Position: {xyz_euler[:3]}")
 
 		## read joystick commands
 		A_pressed, B_pressed, X_pressed, Y_pressed, _, _ = joystick.getInput()
@@ -82,12 +88,14 @@ def main(save_path: str, num: int, target: np.array, thresh: float=0.05):
 
 			if B_pressed and (time.time() - last_time > step_time):
 				print("---Finished Recording")
+				mode = "v"
 				record = False
 		
 		elif not record:
 
 			if A_pressed:
-				print("---Started Recording!")
+				print("---Started Recording")
+				mode = "d"
 				record = True
 				last_time = time.time()
 
@@ -95,7 +103,14 @@ def main(save_path: str, num: int, target: np.array, thresh: float=0.05):
 				with open(save_path + "/dem_" + str(num+1) + ".pkl", "wb") as file:
 					pickle.dump(data, file)
 				print("---Saved Recording")
+			
+			if X_pressed:
+				print("---Robot Returning Home")
+				Robot.go2home(conn_robot)
 				shutdown = True
+		
+		## robot receive zero velocity command
+		Robot.send2robot(conn_robot, [0., 0., 0., 0., 0., 0., 0.,], mode)
 
 	print("[*] Recorded data:\n", data["xyz_euler"])
 
