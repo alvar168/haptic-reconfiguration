@@ -16,6 +16,7 @@ void loop() {
     if (Serial.available()) {
         String input = Serial.readStringUntil('\n');  // Read input line
         input.trim();  // Remove spaces and newlines
+        Serial.println("Received: " + input);  // Debugging line
 
         // Turn OFF all solenoids before processing new input
         for (int i = 0; i < numSolenoids; i++) {
@@ -29,6 +30,7 @@ void loop() {
         }
 
         int index = 0;
+        Serial.print("Parsed solenoids: ");  // New debugging line
         while (index < input.length()) {
             int nextComma = input.indexOf(',', index);
             if (nextComma == -1) nextComma = input.length();
@@ -41,6 +43,8 @@ void loop() {
 
                 if (solenoidNum >= 1 && solenoidNum <= numSolenoids) {
                     digitalWrite(solenoidPins[solenoidNum - 1], HIGH);
+                    Serial.print(solenoidNum);  // Print which solenoids are being turned on
+                    Serial.print(" ");
                 } else {
                     Serial.print("Invalid solenoid number: ");
                     Serial.println(solenoidNumStr);

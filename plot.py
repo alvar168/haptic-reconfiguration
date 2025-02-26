@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Set folder name
-folder_name = "antonio"
+folder_name = "none"
 data_path = f"user_data/{folder_name}/"
 
 # Get list of all saved recordings
