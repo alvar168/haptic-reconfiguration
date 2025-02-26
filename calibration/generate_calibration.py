@@ -1,6 +1,6 @@
 import pickle
 
-# Define solenoid mappings for a single display (D4 used as an example)
+# Define solenoid mappings for a single display (D4 used as example)
 solenoid_map = {
     "D1_L": [1, 4], "D1_M": [2, 4], "D1_H": [3, 4],
     "D2_L": [1, 5], "D2_M": [2, 5], "D2_H": [3, 5],

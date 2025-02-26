@@ -7,6 +7,7 @@ import yaml
 import os
 import serial
 import random
+import json
 
 from utils import *
 
@@ -53,16 +54,20 @@ print('[*] Arduino connected')
 
 def loadHapticSignals() -> list:
     """Load haptic signal parameters for each trial and shuffle order."""
-    with open('haptic_signals.pkl', 'rb') as f:
-        signals = pickle.load(f)
+    with open('haptic_signals.json', 'r', encoding="utf-8") as f:
+        data = json.load(f)  # Load as a dictionary
+    
+    # Extract the list of haptic signals
+    signals = data.get("haptic_signals", [])  # Ensure it exists, or return an empty list
     random.shuffle(signals)  # Shuffle the trials for random order
     return signals
 
+
 def send_haptic_signal(haptic_signal):
     """Send haptic signal to Arduino via serial."""
-    signal_str = ",".join(map(str, haptic_signal))  # Convert list to comma-separated string
+    signal_str = ",".join(map(str, haptic_signal["solenoids"]))  # Extract solenoid numbers
     arduino.write((signal_str + "\n").encode())  # Send to Arduino
-    print(f"[*] Sending haptic signal: {signal_str}")
+    print(f"[*] Sending haptic signal: {signal_str} ({haptic_signal['direction']})")
 
 def send_end_signal():
     """Send '0' to Arduino to deflate all solenoids."""
@@ -70,7 +75,7 @@ def send_end_signal():
     print("[*] Sending deflate signal: 0")
 
 
-def main(save_path: str, num: int, haptic_signal: np.array, thresh: float=0.05):
+def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 	'''
 	Instructions:
 	
@@ -131,12 +136,23 @@ def main(save_path: str, num: int, haptic_signal: np.array, thresh: float=0.05):
 				send_haptic_signal(haptic_signal)
 
 			if X_pressed:
-				with open(save_path + "/trial_" + str(num+1) + ".pkl", "wb") as file:
-					pickle.dump(data, file)
-				print("---Saved Trial")
+				# Convert NumPy arrays to lists before saving
+				data_serializable = {
+					"time": data["time"],
+					"joint_positions": [list(q) for q in data["joint_positions"]],  # Convert arrays to lists
+					"xyz_euler": [list(xyz) for xyz in data["xyz_euler"]],  # Convert arrays to lists
+					"haptic_signal": data["haptic_signal"]  # Already a list
+				}
+
+				trial_filename = os.path.join(save_path, f"trial_{num+1}.json")
+				with open(trial_filename, "w") as file:
+					json.dump(data_serializable, file, indent=4)
+
+				print(f"--- Saved Trial as {trial_filename}")
 				shutdown = True
 
-				
+
+
 if __name__=="__main__": 
 	"""
 	You can set name of recordings as input arguments in terminal
@@ -150,8 +166,6 @@ if __name__=="__main__":
 	total_trials = len(haptic_signals)
 
 	for num, haptic_signal in enumerate(haptic_signals):
-		# print("[*] Trial ", num + 1)
-		save_path = "user_data/{}/".format(args.name)
-		if not os.path.exists(save_path):
-			os.makedirs(save_path)
+		save_path = f"user_data/{args.name}/"
+		os.makedirs(save_path, exist_ok=True)
 		main(save_path, num, haptic_signal)
