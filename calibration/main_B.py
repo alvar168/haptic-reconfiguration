@@ -5,6 +5,8 @@ import pickle
 import time
 import yaml
 import os
+import serial
+import random
 
 from utils import *
 
@@ -18,6 +20,19 @@ Functionalities defined in this script:
 - User moves based on haptic feedback
 - Position & time data recorded
 
+Instructions:
+
+- Set robot to Execution mode
+- Run main_B.py in terminal
+- Run ./return_home in low-level computer
+- Switch robot to Programming mode
+- Move robot to home position
+- Press A to start trial
+- User moves robot
+- Press B to end trial
+- Press X to record trial
+- Move robot to home position and repeat...
+
 """
 
 ## initialize robot
@@ -29,16 +44,30 @@ print('    Successfully connected')
 ## initialize joystick
 joystick = JoystickControl()
 
+# Initialize serial communication with Arduino
+arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+print('[*] Connecting to Arduino')
+time.sleep(2)  # Wait for Arduino to initialize
+print('[*] Arduino connected')
+
+
 def loadHapticSignals() -> list:
-    """Load haptic signal parameters for each trial."""
+    """Load haptic signal parameters for each trial and shuffle order."""
     with open('haptic_signals.pkl', 'rb') as f:
         signals = pickle.load(f)
+    random.shuffle(signals)  # Shuffle the trials for random order
     return signals
 
 def send_haptic_signal(haptic_signal):
-    """Send haptic signal to Arduino (implement this as needed)."""
-    print(f"[*] Sending haptic signal: {haptic_signal}")
-    # Add code to communicate with Arduino via serial, e.g., using pyserial
+    """Send haptic signal to Arduino via serial."""
+    signal_str = ",".join(map(str, haptic_signal))  # Convert list to comma-separated string
+    arduino.write((signal_str + "\n").encode())  # Send to Arduino
+    print(f"[*] Sending haptic signal: {signal_str}")
+
+def send_end_signal():
+    """Send '0' to Arduino to deflate all solenoids."""
+    arduino.write(b"0\n")
+    print("[*] Sending deflate signal: 0")
 
 
 def main(save_path: str, num: int, haptic_signal: np.array, thresh: float=0.05):
@@ -87,6 +116,7 @@ def main(save_path: str, num: int, haptic_signal: np.array, thresh: float=0.05):
 
 			if B_pressed and (time.time() - last_time > step_time):
 				print("---Finished Trial")
+				send_end_signal()
 				record = False
 		
 		elif not record:
@@ -106,11 +136,7 @@ def main(save_path: str, num: int, haptic_signal: np.array, thresh: float=0.05):
 				print("---Saved Trial")
 				shutdown = True
 
-	# print("[*] Recorded data:\n", data["xyz_euler"])
-	# print("[*] Recorded data \n")
-
-
-
+				
 if __name__=="__main__": 
 	"""
 	You can set name of recordings as input arguments in terminal
