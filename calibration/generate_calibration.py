@@ -1,4 +1,4 @@
-import pickle
+import json
 
 # Define solenoid mappings for a single display (D4 used as example)
 solenoid_map = {
@@ -8,12 +8,27 @@ solenoid_map = {
     "D4_L": [6, 10], "D4_M": [7, 10], "D4_H": [8, 10]  # Using D4 as the example display
 }
 
-# Generate signals for a single display (D4) with 3 levels, repeated 5 times
-calibration_signals = [solenoid_map[f"D4_{level}"] for level in ["L", "M", "H"]] * 5
+# Reverse mapping: Convert solenoid numbers back to directional labels (keys as strings)
+solenoid_to_direction = {str(v): k for k, v in solenoid_map.items()}
 
-# Save to file
-with open("calibration_signals.pkl", "wb") as f:
-    pickle.dump(calibration_signals, f)
+# Generate signals for a single display (D4) with 3 levels, repeated 5 times
+calibration_signals = [
+    {
+        "solenoids": solenoid_map[f"D4_{level}"],
+        "direction": f"D4_{level}"
+    }
+    for level in ["L", "M", "H"]
+] * 5  # Repeat 5 times
+
+# Save to JSON file
+data_to_save = {
+    "solenoid_map": solenoid_map,  # Store mapping in JSON
+    "solenoid_to_direction": solenoid_to_direction,  # Reverse mapping
+    "calibration_signals": calibration_signals  # List of signals
+}
+
+with open("calibration_signals.json", "w") as f:
+    json.dump(data_to_save, f, indent=4)
 
 # Print signals for verification
 for i, signal in enumerate(calibration_signals):
