@@ -64,10 +64,10 @@ def send_end_signal():
 user_id = input("Enter participant ID: ")
 hand = input("Enter hand used (L/R): ").upper()  # Standardize to uppercase
 device_type = input("Enter display type (Ring, Bracelet, etc.): ")
-display_id = input("Enter display ID (Index-D4, Middle-D1, Ring-D3, Pinky-D2 etc.): ")  # Specific location
+display_id = input("Enter display ID (Index-D4, Middle-D1, Ring-D3, Pinky-D2, Bracelet D2, etc.): ")  # Specific location
 
 # ------- FORMAT FILENAME WITH METADATA ---------
-file_name = f"experiment_{user_id}_{device_type}_{hand}_P.json"
+file_name = f"P_{user_id}_{device_type}_{hand}.json"
 
 # ------- GET HAPTIC SIGNAL LIST ---------
 calibration_signals, haptic_signals = loadHapticSignals()
@@ -176,7 +176,6 @@ if any(label is None for label in haptic_labels):
     print("Error: Some trials have missing labels. Check signal-to-label mapping.")
     exit()
 
-# ------- CONFUSION MATRIX COMPUTATION ---------
 conf_matrix = confusion_matrix(haptic_labels, responses, labels=[1, 2, 3])
 conf_matrix_norm = conf_matrix.astype('float') / conf_matrix.sum(axis=1)[:, np.newaxis] * 100
 
@@ -188,7 +187,7 @@ plt.ylabel("Actual Pressure Level")
 plt.title("Confusion Matrix for Pressure Identification")
 
 # Save in the same directory as the JSON file
-conf_matrix_plot_filename = os.path.join(participant_dir, f"experiment_{user_id}_{device_type}_{display_id}_{hand}_P_conf_matrix.png")
+conf_matrix_plot_filename = os.path.join(participant_dir, f"P_{user_id}_{device_type}_{display_id}_{hand}_conf_matrix.png")
 plt.savefig(conf_matrix_plot_filename, bbox_inches="tight", dpi=300)
 plt.show()
 plt.close()
@@ -225,7 +224,7 @@ plt.ylabel("Average Response Time (s)")
 plt.title("Average Response Time for Correct vs Incorrect Trials")
 
 # Save response time plot in the same directory
-response_time_plot_filename = os.path.join(participant_dir, f"experiment_{user_id}_{device_type}_{display_id}_{hand}_P_response_times.png")
+response_time_plot_filename = os.path.join(participant_dir, f"P_{user_id}_{device_type}_{display_id}_{hand}_response_times.png")
 plt.savefig(response_time_plot_filename, bbox_inches="tight", dpi=300)
 plt.show()
 plt.close()
@@ -268,7 +267,7 @@ data = {
 #     json.dump(data, f, indent=4)
 
 # Define filename with full path
-file_name = f"{participant_dir}/experiment_{user_id}_{device_type}_{display_id}_{hand}_P.json"
+file_name = f"{participant_dir}/P_{user_id}_{device_type}_{display_id}_{hand}.json"
 
 # Save JSON
 with open(file_name, "w") as f:
