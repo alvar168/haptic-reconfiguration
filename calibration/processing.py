@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 
 # Load only raw trial JSON files (avoid processed files)
-trial_files = sorted(glob.glob("user_data/none/trial_*.json"))
+trial_files = sorted(glob.glob("user_data/3FBracelet/trial_*.json"))
 trial_files = [f for f in trial_files if "_processed" not in f]  # Exclude processed files
 
 # Define workspace grid (7x7)
