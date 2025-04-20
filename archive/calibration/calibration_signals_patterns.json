@@ -1,0 +1,173 @@
+{
+    "solenoid_map": {
+        "D1_L": [
+            1
+        ],
+        "D1_M": [
+            1,
+            2
+        ],
+        "D1_H": [
+            1,
+            2,
+            3
+        ],
+        "D2_L": [
+            4
+        ],
+        "D2_M": [
+            4,
+            5
+        ],
+        "D2_H": [
+            4,
+            5,
+            6
+        ],
+        "D3_L": [
+            7
+        ],
+        "D3_M": [
+            7,
+            8
+        ],
+        "D3_H": [
+            7,
+            8,
+            9
+        ],
+        "D4_L": [
+            10
+        ],
+        "D4_M": [
+            10,
+            11
+        ],
+        "D4_H": [
+            10,
+            11,
+            12
+        ]
+    },
+    "solenoid_to_direction": {
+        "[1]": "D1_L",
+        "[1, 2]": "D1_M",
+        "[1, 2, 3]": "D1_H",
+        "[4]": "D2_L",
+        "[4, 5]": "D2_M",
+        "[4, 5, 6]": "D2_H",
+        "[7]": "D3_L",
+        "[7, 8]": "D3_M",
+        "[7, 8, 9]": "D3_H",
+        "[10]": "D4_L",
+        "[10, 11]": "D4_M",
+        "[10, 11, 12]": "D4_H"
+    },
+    "calibration_signals": [
+        {
+            "solenoids": [
+                10
+            ],
+            "direction": "D4_L"
+        },
+        {
+            "solenoids": [
+                10,
+                11
+            ],
+            "direction": "D4_M"
+        },
+        {
+            "solenoids": [
+                10,
+                11,
+                12
+            ],
+            "direction": "D4_H"
+        },
+        {
+            "solenoids": [
+                10
+            ],
+            "direction": "D4_L"
+        },
+        {
+            "solenoids": [
+                10,
+                11
+            ],
+            "direction": "D4_M"
+        },
+        {
+            "solenoids": [
+                10,
+                11,
+                12
+            ],
+            "direction": "D4_H"
+        },
+        {
+            "solenoids": [
+                10
+            ],
+            "direction": "D4_L"
+        },
+        {
+            "solenoids": [
+                10,
+                11
+            ],
+            "direction": "D4_M"
+        },
+        {
+            "solenoids": [
+                10,
+                11,
+                12
+            ],
+            "direction": "D4_H"
+        },
+        {
+            "solenoids": [
+                10
+            ],
+            "direction": "D4_L"
+        },
+        {
+            "solenoids": [
+                10,
+                11
+            ],
+            "direction": "D4_M"
+        },
+        {
+            "solenoids": [
+                10,
+                11,
+                12
+            ],
+            "direction": "D4_H"
+        },
+        {
+            "solenoids": [
+                10
+            ],
+            "direction": "D4_L"
+        },
+        {
+            "solenoids": [
+                10,
+                11
+            ],
+            "direction": "D4_M"
+        },
+        {
+            "solenoids": [
+                10,
+                11,
+                12
+            ],
+            "direction": "D4_H"
+        }
+    ]
+}

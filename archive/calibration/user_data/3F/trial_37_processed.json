@@ -1,0 +1,18 @@
+{
+    "initial_position": [
+        -0.5154104968437354,
+        0.00883679605376314
+    ],
+    "end_position": [
+        -0.5013315566482177,
+        0.20957376026396918
+    ],
+    "signal_true_position": [
+        -0.525,
+        0.13333333333333328
+    ],
+    "distance_to_true_position": 0.07982980589518028,
+    "total_travel_distance": 0.22501151668594516,
+    "trial_duration": 9.649805307388306,
+    "direction": "D1_L"
+}

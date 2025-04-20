@@ -1,0 +1,227 @@
+[
+    {
+        "solenoids": [
+            4,
+            5,
+            6
+        ],
+        "direction": "D2_H"
+    },
+    {
+        "solenoids": [
+            10,
+            11
+        ],
+        "direction": "D4_M"
+    },
+    {
+        "solenoids": [
+            7
+        ],
+        "direction": "D3_L"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            7
+        ],
+        "direction": "D2_M + D3_L"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            10,
+            11
+        ],
+        "direction": "D2_M + D4_M"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            10,
+            11,
+            12
+        ],
+        "direction": "D2_M + D4_H"
+    },
+    {
+        "solenoids": [
+            10,
+            11,
+            12
+        ],
+        "direction": "D4_H"
+    },
+    {
+        "solenoids": [
+            4,
+            5
+        ],
+        "direction": "D2_M"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            6,
+            10,
+            11
+        ],
+        "direction": "D2_H + D4_M"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            10
+        ],
+        "direction": "D2_M + D4_L"
+    },
+    {
+        "solenoids": [
+            4,
+            7,
+            8,
+            9
+        ],
+        "direction": "D2_L + D3_H"
+    },
+    {
+        "solenoids": [
+            4,
+            7
+        ],
+        "direction": "D2_L + D3_L"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "direction": "D2_H + D3_M"
+    },
+    {
+        "solenoids": [
+            4
+        ],
+        "direction": "D2_L"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            6,
+            7
+        ],
+        "direction": "D2_H + D3_L"
+    },
+    {
+        "solenoids": [
+            4,
+            7,
+            8
+        ],
+        "direction": "D2_L + D3_M"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            7,
+            8,
+            9
+        ],
+        "direction": "D2_M + D3_H"
+    },
+    {
+        "solenoids": [
+            4,
+            10
+        ],
+        "direction": "D2_L + D4_L"
+    },
+    {
+        "solenoids": [
+            4,
+            10,
+            11
+        ],
+        "direction": "D2_L + D4_M"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            7,
+            8
+        ],
+        "direction": "D2_M + D3_M"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            6,
+            10
+        ],
+        "direction": "D2_H + D4_L"
+    },
+    {
+        "solenoids": [
+            7,
+            8,
+            9
+        ],
+        "direction": "D3_H"
+    },
+    {
+        "solenoids": [
+            4,
+            10,
+            11,
+            12
+        ],
+        "direction": "D2_L + D4_H"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            6,
+            10,
+            11,
+            12
+        ],
+        "direction": "D2_H + D4_H"
+    },
+    {
+        "solenoids": [
+            10
+        ],
+        "direction": "D4_L"
+    },
+    {
+        "solenoids": [
+            7,
+            8
+        ],
+        "direction": "D3_M"
+    },
+    {
+        "solenoids": [
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+        ],
+        "direction": "D2_H + D3_H"
+    }
+]
