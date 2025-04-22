@@ -8,6 +8,7 @@ import os
 import serial
 import random
 import json
+from datetime import datetime
 
 from scripts.utils import *
 
@@ -52,16 +53,27 @@ time.sleep(2)  # Wait for Arduino to initialize
 print('[*] Arduino connected')
 
 
-def loadHapticSignals() -> list:
-    """Load haptic signal parameters for each trial and shuffle order."""
-    with open('haptic_signals_patterns_2.json', 'r', encoding="utf-8") as f:
-	# with open('haptic_signals.json', 'r', encoding="utf-8") as f:
-        data = json.load(f)  # Load as a dictionary
-    
-    # Extract the list of haptic signals
-    signals = data.get("haptic_signals", [])  # Ensure it exists, or return an empty list
-    random.shuffle(signals)  # Shuffle the trials for random order
+def loadHapticSignals(config_id: int) -> list:
+    """Load haptic signals for a selected configuration."""
+    config_map = {
+        1: "overload_signals.json",
+        2: "pressure_area_signals.json",
+        3: "pressure_frequency_signals.json",
+        4: "area_frequency_signals.json"
+    }
+
+    filename = config_map.get(config_id)
+    if not filename:
+        raise ValueError("Invalid configuration selected.")
+
+    filepath = os.path.join("signals", filename)
+    with open(filepath, 'r', encoding="utf-8") as f:
+        data = json.load(f)
+
+    signals = data.get("haptic_signals", [])
+    random.shuffle(signals)
     return signals
+
 
 
 def send_haptic_signal(haptic_signal):
@@ -83,8 +95,7 @@ def save_trial_order():
         json.dump(haptic_signals, f, indent=4)
     print(f"[*] Saved trial order to {trial_order_file}")
     
-def load_or_generate_trials(save_path):
-    """Load randomized trials if they exist, otherwise generate and save them."""
+def load_or_generate_trials(save_path, config_id: int):
     trial_order_file = os.path.join(save_path, "trial_order.json")
     
     if os.path.exists(trial_order_file):
@@ -93,12 +104,13 @@ def load_or_generate_trials(save_path):
             haptic_signals = json.load(f)
     else:
         print("[*] Generating new randomized trial order.")
-        haptic_signals = loadHapticSignals()  # Randomize trials
+        haptic_signals = loadHapticSignals(config_id)
         with open(trial_order_file, "w") as f:
             json.dump(haptic_signals, f, indent=4)
         print(f"[*] Saved new trial order to {trial_order_file}")
 
     return haptic_signals
+
 
 def get_completed_trials(save_path):
     """Check which trials have already been saved, ignoring trial_order.json."""
@@ -176,8 +188,19 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 				send_haptic_signal(haptic_signal)
 
 			if X_pressed:
+				end_time = time.time()  # Capture when trial was saved
+				duration_sec = end_time - start_time
+
+				start_time_str = datetime.fromtimestamp(start_time).strftime('%Y-%m-%d %H:%M:%S')
+				end_time_str = datetime.fromtimestamp(end_time).strftime('%Y-%m-%d %H:%M:%S')
+
 				# Convert NumPy arrays to lists before saving
 				data_serializable = {
+					"trial_number": num+1,
+					"config_id": config_id,
+					"start_timestamp": start_time_str,
+					"end_timestamp": end_time_str,
+					"duration_sec": duration_sec,
 					"time": data["time"],
 					"joint_positions": [list(q) for q in data["joint_positions"]],  # Convert arrays to lists
 					"xyz_euler": [list(xyz) for xyz in data["xyz_euler"]],  # Convert arrays to lists
@@ -202,11 +225,15 @@ if __name__=="__main__":
 	parser.add_argument('--name', help='choose folder name', type=str, default="none")
 	args = parser.parse_args()
 
+	print("Which configuration are you testing?")
+	print("(1) Overload\n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
+	config_id = int(input("Enter configuration number (1-4): ").strip())
+
 	save_path = f"user_data/{args.name}/"
 	os.makedirs(save_path, exist_ok=True)
       
 	# haptic_signals = loadHapticSignals()
-	haptic_signals = load_or_generate_trials(save_path)
+	haptic_signals = load_or_generate_trials(save_path, config_id)
 
 	print(f"Total haptic signals loaded: {len(haptic_signals)}")
 	total_trials = len(haptic_signals)
