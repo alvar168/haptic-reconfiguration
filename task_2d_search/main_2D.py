@@ -78,11 +78,11 @@ def loadHapticSignals(config_id: int) -> list:
 
 def send_haptic_signal(haptic_signal):
     """Send haptic signal to Arduino via serial."""
-    signal_str = ",".join(map(str, haptic_signal["solenoids"]))  # Extract solenoid numbers
+    signal_str = ",".join(map(str, haptic_signal["signal"]))
     arduino.flush()
     time.sleep(0.1)
     arduino.write((signal_str + "\n").encode())  # Send to Arduino
-    print(f"[*] Sending haptic signal: {signal_str} ({haptic_signal['direction']})")
+    print(f"[*] Sending haptic signal: {signal_str}")
 
 def send_end_signal():
     """Send '0' to Arduino to deflate all solenoids."""
@@ -155,6 +155,10 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 	print(f"[*] Trial {num + 1} / {total_trials}")
 	print("[*] Move the robot to the home position.")
 	input("[*] Press Enter when ready.")
+    
+	assert haptic_signal["signal"][0] == config_id, \
+    f"Config ID mismatch: expected {config_id}, got {haptic_signal['signal'][0]}"
+
 
 	while not shutdown:
 
@@ -197,7 +201,7 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 				# Convert NumPy arrays to lists before saving
 				data_serializable = {
 					"trial_number": num+1,
-					"config_id": config_id,
+					"config_id": haptic_signal["signal"][0],
 					"start_timestamp": start_time_str,
 					"end_timestamp": end_time_str,
 					"duration_sec": duration_sec,
