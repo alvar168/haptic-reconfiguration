@@ -2,10 +2,12 @@ from typing import Callable
 import numpy as np
 from itertools import product
 
+from typing import Optional
+
 
 def h_mapping(
     theta: np.ndarray,
-    theta_perm: np.ndarray | None = None,
+    theta_perm: Optional[np.ndarray] = None,
     xdim: int = 5,
     ydim: int = 5,
 ):
@@ -38,10 +40,10 @@ def human_model(
     THETAS: np.ndarray,
     W: np.ndarray,
     beta: float = 5.0,
-    theta_perm: np.ndarray | None = None,
+    theta_perm: Optional[np.ndarray] = None,
     xdim: int = 5,
     ydim: int = 5,
-    h_func: Callable | None = None,
+    h_func: Optional[Callable] = None,
 ):
     """
     note that W is the full saliency matrix. if
@@ -68,10 +70,10 @@ def information_gain(
     THETAS: np.ndarray,
     W: np.ndarray,
     beta: float = 5.0,
-    theta_perm: np.ndarray | None = None,
+    theta_perm: Optional[np.ndarray] = None,
     xdim: int = 5,
     ydim: int = 5,
-    h_func: Callable | None = None,
+    h_func: Optional[Callable] = None,
 ):
     ig = 0.0
     M = len(SIGNALS)
@@ -120,7 +122,7 @@ def ig_optimal(
     beta: float = 5.0,
     n_interfaces=3,
     n_axis=2,
-    h_func: Callable | None = None,
+    h_func: Optional[Callable] = None,
 ):
     if h_func is None:
         h_func = h_mapping

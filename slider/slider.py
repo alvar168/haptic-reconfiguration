@@ -10,7 +10,7 @@ from information_gain import ig_optimal, construct_saliency
 
 def user_study_h_mapping(
     theta: np.ndarray,
-    theta_perm: np.ndarray | None = None,
+    theta_perm: Optional[np.ndarray] = None,
     xdim: int = 4,
     ydim: int = 4,
     N_INTERFACES: int = 3,
