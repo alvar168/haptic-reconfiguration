@@ -4,13 +4,16 @@ from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
 import pygame_widgets
 from pygame.locals import KEYDOWN, K_SPACE
+from typing import Optional
+from datetime import datetime, timezone, timedelta
+import os
 
 from information_gain import ig_optimal, construct_saliency
 
 
 def user_study_h_mapping(
     theta: np.ndarray,
-    theta_perm: np.ndarray | None = None,
+    theta_perm: Optional[np.ndarray] = None,
     xdim: int = 4,
     ydim: int = 4,
     N_INTERFACES: int = 3,
@@ -111,12 +114,24 @@ def main():
     )
     s = "Selected Interface Configurations [Pressure Area Frequency]. 0 means X axis, 1 means Y axis, -1 means unused"
     print("=" * len(s))
-    print()
+    print(s)
     print("=" * len(s))
     for i in range(len(igs)):
         print(f"info gain: {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}")
     x = input("\nDone? [y/n] ").lower()
     pygame.quit()
+
+    os.makedirs("data", exist_ok=True)
+    with open("./data/log.log", "a") as fh:
+        fh.write("=" * len(s) + "\n")
+        fh.write(f"{datetime.now(timezone(timedelta(hours=-5), 'EST'))}\n")
+        fh.write(f"Preferences: {P[0, 0]} {P[1, 1]} {P[2, 2]}\n")
+        fh.write(f"Saliency: {W[0, 0]} {W[1, 1]} {W[2, 2]}\n")
+        for i in range(len(igs)):
+            fh.write(
+                f"info gain: {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}\n"
+            )
+
     return x == "y"
 
 
