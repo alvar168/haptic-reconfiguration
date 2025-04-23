@@ -1,6 +1,6 @@
 const int PINS[] = {22, 23, 24, 25, 26, 27, 28, 29, 30, 31}; // Solenoids 1–9 → Pins 22–30
 const int t_s = 300; // spacing for area level patterns
-const int freqDuration = 3000; // total frequency duration per trial
+const int freqDuration = 2000; // total frequency duration per trial
 
 String input = "";
 
@@ -41,41 +41,41 @@ void handleSignal(int config, int x, int y) {
   switch (config) {
     case 1: // Overload: Pressure (X), Frequency + Area (Y)
       playPressureLevel(mapToPressure(x));
-      delay(3000);
+      delay(2000);
       playFrequencyLevel(mapToFrequency(y));
       playAreaLevel(mapToArea(y));
-      delay(3000);
+      delay(2000);
       break;
     case 2: // Pressure-Area
       if (x != 0) {
         playPressureLevel(mapToPressure(x));
-        delay(3000);
+        delay(2000);
       }
       if (y != 0) {
         playAreaLevel(mapToArea(y));
-        delay(3000);
+        delay(2000);
       }
       break;
 
     case 3: // Pressure-Frequency
       if (x != 0) {
         playPressureLevel(mapToPressure(x));
-        delay(3000);
+        delay(2000);
       }
       if (y != 0) {
         playFrequencyLevel(mapToFrequency(y));
-        delay(3000);
+        delay(2000);
       }
       break;
 
     case 4: // Frequency-Area
       if (x != 0) {
         playFrequencyLevel(mapToFrequency(x));
-        delay(3000);
+        delay(2000);
       }
       if (y != 0) {
         playAreaLevel(mapToArea(y));
-        delay(3000);
+        delay(2000);
       }
       break;
     default:
