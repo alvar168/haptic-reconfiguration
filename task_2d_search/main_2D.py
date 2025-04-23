@@ -10,7 +10,7 @@ import random
 import json
 from datetime import datetime
 
-from scripts.utils import *
+from utils import *
 
 
 """
@@ -59,7 +59,7 @@ def loadHapticSignals(config_id: int) -> list:
         1: "overload_signals.json",
         2: "pressure_area_signals.json",
         3: "pressure_frequency_signals.json",
-        4: "area_frequency_signals.json"
+        4: "frequency_area_signals.json"
     }
 
     filename = config_map.get(config_id)
@@ -208,6 +208,8 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 					"time": data["time"],
 					"joint_positions": [list(q) for q in data["joint_positions"]],  # Convert arrays to lists
 					"xyz_euler": [list(xyz) for xyz in data["xyz_euler"]],  # Convert arrays to lists
+                    "start_position": list(data["xyz_euler"][0]) if data["xyz_euler"] else None,
+                    "end_position": list(data["xyz_euler"][-1]) if data["xyz_euler"] else None,
 					"haptic_signal": data["haptic_signal"]  # Already a list
 				}
 
@@ -225,15 +227,15 @@ if __name__=="__main__":
 	You can set name of recordings as input arguments in terminal
 	"""
 
-	parser = argparse.ArgumentParser(description='Collecting haptic feedback data')
-	parser.add_argument('--name', help='choose folder name', type=str, default="none")
-	args = parser.parse_args()
+	folder_name = input("Enter folder name for saving trial data: ").strip()
+	save_path = f"user_data/{folder_name}/"
+
 
 	print("Which configuration are you testing?")
 	print("(1) Overload\n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
 	config_id = int(input("Enter configuration number (1-4): ").strip())
 
-	save_path = f"user_data/{args.name}/"
+	save_path = f"user_data/{folder_name}/"
 	os.makedirs(save_path, exist_ok=True)
       
 	# haptic_signals = loadHapticSignals()
