@@ -103,6 +103,7 @@ def main():
         textbox2.setText(f"Frequency: {int(P[1, 1] * 10)}/10")
         textbox3.setText(f"Area:      {int(P[2, 2] * 10)}/10")
     W = construct_saliency(P, gamma=0.25)
+    """4x4 interface"""
     igs, perms, idxs = ig_optimal(
         W,
         xdim=XDIM,
@@ -112,25 +113,97 @@ def main():
         n_axis=N_AXIS,
         h_func=user_study_h_mapping,
     )
-    s = "Selected Interface Configurations [Pressure Area Frequency]. 0 means X axis, 1 means Y axis, -1 means unused"
+    s = "Selected Interface Configurations (4x4) [Pressure Area Frequency]. 0 means X axis, 1 means Y axis, -1 means unused"
     print("=" * len(s))
     print(s)
     print("=" * len(s))
+    done_OVERLOAD = False
+    done_PREF = False
+    done_UNPREF = False
     for i in range(len(igs)):
-        print(f"info gain: {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}")
-    x = input("\nDone? [y/n] ").lower()
-    pygame.quit()
+        if not done_OVERLOAD:
+            print(
+                f"info gain (OVERLOAD): {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}"
+            )
+            done_OVERLOAD = True
+        if not done_PREF:
+            if np.sum(perms[idxs[i]] == -1) == 1:
+                print(
+                    f"info gain (PREF): {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}"
+                )
+                done_PREF = True
+                break
+    i = len(igs) - 1
+    while not done_UNPREF:
+        if np.sum(perms[idxs[i]] == -1) == 1 and np.sum(perms[idxs[i]] == 1) == 1:
+            print(
+                f"info gain (UNPREF): {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}"
+            )
+            done_UNPREF = True
+        i -= 1
 
     os.makedirs("data", exist_ok=True)
     with open("./data/log.log", "a") as fh:
         fh.write("=" * len(s) + "\n")
-        fh.write(f"{datetime.now(timezone(timedelta(hours=-5), 'EST'))}\n")
+        fh.write(f"(4x4): {datetime.now(timezone(timedelta(hours=-5), 'EST'))}\n")
         fh.write(f"Preferences: {P[0, 0]} {P[1, 1]} {P[2, 2]}\n")
         fh.write(f"Saliency: {W[0, 0]} {W[1, 1]} {W[2, 2]}\n")
         for i in range(len(igs)):
             fh.write(
                 f"info gain: {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}\n"
             )
+
+    igs, perms, idxs = ig_optimal(
+        W,
+        xdim=7,
+        ydim=3,
+        beta=BETA,
+        n_interfaces=N_INTERFACES,
+        n_axis=N_AXIS,
+        h_func=user_study_h_mapping,
+    )
+    s = "Selected Interface Configurations (7x3) [Pressure Area Frequency]. 0 means X axis, 1 means Y axis, -1 means unused"
+    print("=" * len(s))
+    print(s)
+    print("=" * len(s))
+    done_OVERLOAD = False
+    done_PREF = False
+    done_UNPREF = False
+    for i in range(len(igs)):
+        if not done_OVERLOAD:
+            print(
+                f"info gain (OVERLOAD): {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}"
+            )
+            done_OVERLOAD = True
+        if not done_PREF:
+            if np.sum(perms[idxs[i]] == -1) == 1:
+                print(
+                    f"info gain (PREF): {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}"
+                )
+                done_PREF = True
+                break
+    i = len(igs) - 1
+    while not done_UNPREF:
+        if np.sum(perms[idxs[i]] == -1) == 1 and np.sum(perms[idxs[i]] == 1) == 1:
+            print(
+                f"info gain (UNPREF): {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}"
+            )
+            done_UNPREF = True
+        i -= 1
+
+    os.makedirs("data", exist_ok=True)
+    with open("./data/log.log", "a") as fh:
+        fh.write("=" * len(s) + "\n")
+        fh.write(f"(7x3): {datetime.now(timezone(timedelta(hours=-5), 'EST'))}\n")
+        fh.write(f"Preferences: {P[0, 0]} {P[1, 1]} {P[2, 2]}\n")
+        fh.write(f"Saliency: {W[0, 0]} {W[1, 1]} {W[2, 2]}\n")
+        for i in range(len(igs)):
+            fh.write(
+                f"info gain: {np.round(igs[idxs[i]], 2):1.2f} config: {perms[idxs[i]]}\n"
+            )
+
+    x = input("\nDone? [y/n] ").lower()
+    pygame.quit()
 
     return x == "y"
 
