@@ -1,2 +1,9 @@
 **/__pycache__/
 
+# Ignore files inside task_2d_search/user_data/
+task_2d_search/user_data/*
+task_object_ID/user_data/*
+
+# But keep the user_data/ folder itself
+!task_2d_search/user_data/.gitkeep
+!task_object_ID/user_data/.gitkeep
