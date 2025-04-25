@@ -79,7 +79,7 @@ void handleSignal(int config, int x, int y) {
       }
       break;
 
-    case 4: // Frequency-Area ############## FIX #############3
+    case 4: // Area-Frequency
       if (x != 0) {
         playAreaLevel(mapToArea(x));
         delay(t_signal);
@@ -88,24 +88,6 @@ void handleSignal(int config, int x, int y) {
       }
       if (y != 0) {
         playFrequencyLevel(mapToFrequency(y));
-        delay(t_signal);
-        resetAllPins();
-      }
-      break;
-
-    case 5: // Overload: Pressure + Frequency (X), Area (Y)
-      if (x != 0){
-        playPressureLevel(mapToPressure_5(x));
-        delay(t_signal);
-        resetAllPins();
-        playFrequencyLevel(mapToFrequency_5(x));
-        // delay(t_signal);
-        resetAllPins();
-        delay(500);
-      }
-      if (y != 0) {
-        Serial.println("Playing Area (Y axis)");
-        playAreaLevel(mapToArea_5(y));
         delay(t_signal);
         resetAllPins();
       }
@@ -132,25 +114,6 @@ int mapToArea(int point) {
   else if (point <= 3) return 2;
   else return 3;
 }
-
-int mapToPressure_5(int point) {
-  if (point <= 2) return 1;       // point = 1,2
-  else if (point <= 4) return 2;  // point = 3,4
-  else if (point <= 6) return 3;  // point = 5,6
-  else return 4;                  // point = 7
-}
-
-int mapToFrequency_5(int point) {
-  if (point <= 4) return 1;       // point = 1-4
-  else return 2;                  // point = 5-7
-}
-
-int mapToArea_5(int point) {
-  if (point == 1) return 1;         // Y = 1
-  else if (point == 2) return 2;    // Y = 2
-  else return 3;                    // Y = 3
-}
-
 
 
 // ------------------------- PLAYBACK FUNCTIONS ------------------------
