@@ -71,7 +71,14 @@ def loadHapticSignals(config_id: int) -> list:
         data = json.load(f)
 
     signals = data.get("haptic_signals", [])
-    random.shuffle(signals)
+    
+	# Randomly (IID) select 10 signals from the set
+    n = 10
+    if n > len(signals):
+          raise ValueError(f"Requested {n} signals, but only {len(signals)} available.")
+    signals = random.sample(signals,n)
+	
+    # random.shuffle(signals)
     return signals
 
 
@@ -232,7 +239,7 @@ if __name__=="__main__":
 
 
 	print("Which configuration are you testing?")
-	print("(1) Overload\n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
+	print("(1) Overload (P:FA)\n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
 	config_id = int(input("Enter configuration number (1-4): ").strip())
 
 	save_path = f"user_data/{folder_name}/"
