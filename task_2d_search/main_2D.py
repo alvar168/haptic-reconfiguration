@@ -46,6 +46,8 @@ print('    Successfully connected')
 ## initialize joystick
 joystick = JoystickControl()
 
+print("[***] IS THE RIGHT ARDUINO SCRIPT UPLOADED? [***]")
+input("-- Press ENTER if ready to go --")
 # Initialize serial communication with Arduino
 arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 print('[*] Connecting to Arduino')
