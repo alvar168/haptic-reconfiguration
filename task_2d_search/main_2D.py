@@ -73,7 +73,7 @@ def loadHapticSignals(config_id: int) -> list:
     signals = data.get("haptic_signals", [])
     
 	# Randomly (IID) select 10 signals from the set
-    n = 10
+    n = 8
     if n > len(signals):
           raise ValueError(f"Requested {n} signals, but only {len(signals)} available.")
     signals = random.sample(signals,n)

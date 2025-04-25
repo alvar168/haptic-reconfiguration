@@ -258,17 +258,15 @@ if __name__=="__main__":
     """
 	You can set name of recordings as input arguments in terminal
 	"""
-    folder_name = input("Enter folder name for saving trial data: ").strip()
-    save_path = f"user_data/{folder_name}/"
-    
-    print("Which configuration are you testing?")
-    print("(1) Overload (P:FA)\n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
-    config_id = int(input("Enter configuration number (1-4): ").strip())
-    
-    save_path = f"user_data/{folder_name}/"
+    input("Press ENTER to continue")
+    save_path = f"user_data/test_trials/"   
     os.makedirs(save_path, exist_ok=True)
     
+    input("Press ENTER to start familiarization round :)")
     run_familiarization()
+
+    print("TRIALS. Testing configuration 3 (Pressure-Frequency)")
+    config_id = 3
     
     # haptic_signals = loadHapticSignals()
     haptic_signals = load_or_generate_trials(save_path, config_id)
