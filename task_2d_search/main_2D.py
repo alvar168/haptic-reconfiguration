@@ -59,7 +59,7 @@ def loadHapticSignals(config_id: int) -> list:
         1: "overload_signals.json",
         2: "pressure_area_signals.json",
         3: "pressure_frequency_signals.json",
-        4: "frequency_area_signals.json"
+        4: "area_frequency_signals.json"
     }
 
     filename = config_map.get(config_id)

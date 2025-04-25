@@ -6,7 +6,7 @@ CONFIGS = {
     1: "overload_signals.json",
     2: "pressure_area_signals.json",
     3: "pressure_frequency_signals.json",
-    4: "frequency_area_signals.json"
+    4: "area_frequency_signals.json"
 }
 
 # 4x4 grid (X and Y values from 1 to 4)
