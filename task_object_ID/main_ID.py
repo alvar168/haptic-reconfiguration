@@ -46,6 +46,8 @@ print('    Successfully connected')
 ## initialize joystick
 joystick = JoystickControl()
 
+print("[***] IS THE RIGHT ARDUINO SCRIPT UPLOADED? [***]")
+input("-- Press ENTER if ready to go --")
 # Initialize serial communication with Arduino
 arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 print('[*] Connecting to Arduino')
@@ -56,22 +58,29 @@ print('[*] Arduino connected')
 def loadHapticSignals(config_id: int) -> list:
     """Load haptic signals for a selected configuration."""
     config_map = {
-        1: "overload_signals.json",
+        
         2: "pressure_area_signals.json",
         3: "pressure_frequency_signals.json",
-        4: "frequency_area_signals.json"
+        4: "area_frequency_signals.json",
+        5: "overload_signals.json"
     }
 
     filename = config_map.get(config_id)
     if not filename:
         raise ValueError("Invalid configuration selected.")
 
-    filepath = os.path.join("signals", filename)
+    filepath = os.path.join("signals_7x3", filename)
     with open(filepath, 'r', encoding="utf-8") as f:
         data = json.load(f)
 
     signals = data.get("haptic_signals", [])
-    random.shuffle(signals)
+    # Randomly (IID) select 10 signals from the set
+    n = 8
+    if n > len(signals):
+          raise ValueError(f"Requested {n} signals, but only {len(signals)} available.")
+    signals = random.sample(signals,n)
+	
+    # random.shuffle(signals)
     return signals
 
 
@@ -232,7 +241,7 @@ if __name__=="__main__":
 
 
 	print("Which configuration are you testing?")
-	print("(1) Overload\n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
+	print("(5) Overload (PF:A) \n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
 	config_id = int(input("Enter configuration number (1-4): ").strip())
 
 	save_path = f"user_data/{folder_name}/"
