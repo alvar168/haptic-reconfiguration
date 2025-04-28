@@ -1,0 +1,68 @@
+==================================================================================================================
+(4x4): 2025-04-28 17:10:40.984618-05:00
+Preferences: 0.8 0.2 0.5
+Saliency: 0.8400000000000001 0.36 0.6
+info gain: 2.76 config: [0 1 1]
+info gain: 2.39 config: [0 1 0]
+info gain: 2.33 config: [ 0  1 -1]
+info gain: 2.33 config: [0 0 1]
+info gain: 2.19 config: [ 0 -1  1]
+info gain: 1.90 config: [0 0 0]
+info gain: 1.90 config: [ 0  0 -1]
+info gain: 1.81 config: [ 0 -1  0]
+info gain: 1.72 config: [ 0 -1 -1]
+info gain: 1.10 config: [-1  0  1]
+info gain: 0.99 config: [-1  0  0]
+info gain: 0.51 config: [-1  0 -1]
+info gain: 0.41 config: [-1 -1  0]
+==================================================================================================================
+(7x3): 2025-04-28 17:10:42.220924-05:00
+Preferences: 0.8 0.2 0.5
+Saliency: 0.8400000000000001 0.36 0.6
+info gain: 2.65 config: [0 1 1]
+info gain: 2.31 config: [0 0 1]
+info gain: 2.29 config: [0 1 0]
+info gain: 2.23 config: [ 0  1 -1]
+info gain: 2.06 config: [ 0 -1  1]
+info gain: 1.88 config: [0 0 0]
+info gain: 1.85 config: [ 0  0 -1]
+info gain: 1.76 config: [ 0 -1  0]
+info gain: 1.66 config: [ 0 -1 -1]
+info gain: 1.03 config: [-1  0  1]
+info gain: 0.93 config: [-1  0  0]
+info gain: 0.50 config: [-1  0 -1]
+info gain: 0.40 config: [-1 -1  0]
+==================================================================================================================
+(4x4): 2025-04-28 18:07:20.241333-05:00
+Preferences: 0.9 0.8 0.6
+Saliency: 0.9199999999999999 0.8400000000000001 0.6799999999999999
+info gain: 3.25 config: [0 1 1]
+info gain: 3.17 config: [0 1 0]
+info gain: 3.12 config: [ 0  1 -1]
+info gain: 2.52 config: [0 0 1]
+info gain: 2.42 config: [ 0 -1  1]
+info gain: 1.95 config: [0 0 0]
+info gain: 1.95 config: [ 0  0 -1]
+info gain: 1.89 config: [ 0 -1  0]
+info gain: 1.86 config: [-1  0  1]
+info gain: 1.84 config: [ 0 -1 -1]
+info gain: 1.41 config: [-1  0  0]
+info gain: 1.27 config: [-1  0 -1]
+info gain: 0.56 config: [-1 -1  0]
+==================================================================================================================
+(7x3): 2025-04-28 18:07:21.477298-05:00
+Preferences: 0.9 0.8 0.6
+Saliency: 0.9199999999999999 0.8400000000000001 0.6799999999999999
+info gain: 3.25 config: [0 1 1]
+info gain: 3.19 config: [0 1 0]
+info gain: 3.13 config: [ 0  1 -1]
+info gain: 2.83 config: [0 0 1]
+info gain: 2.34 config: [0 0 0]
+info gain: 2.31 config: [ 0  0 -1]
+info gain: 2.30 config: [ 0 -1  1]
+info gain: 1.84 config: [-1  0  1]
+info gain: 1.84 config: [ 0 -1  0]
+info gain: 1.78 config: [ 0 -1 -1]
+info gain: 1.55 config: [-1  0  0]
+info gain: 1.32 config: [-1  0 -1]
+info gain: 0.55 config: [-1 -1  0]
