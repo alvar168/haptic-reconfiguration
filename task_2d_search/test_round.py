@@ -54,8 +54,11 @@ print('[*] Arduino connected')
 
 familiarization_signals = [
     {"modality": "Pressure", "signal": [2, 1, 0]},
+    {"modality": "Pressure", "signal": [2, 2, 0]},
+    {"modality": "Pressure", "signal": [2, 3, 0]},
     {"modality": "Pressure", "signal": [2, 4, 0]},
     {"modality": "Area", "signal": [4, 1, 0]},
+    {"modality": "Area", "signal": [4, 2, 0]},
     {"modality": "Area", "signal": [4, 4, 0]},
     {"modality": "Frequency", "signal": [4, 0, 1]},
     {"modality": "Frequency", "signal": [4, 0, 4]},
