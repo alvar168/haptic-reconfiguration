@@ -46,14 +46,20 @@ print('    Successfully connected')
 ## initialize joystick
 joystick = JoystickControl()
 
-print("[***] IS THE RIGHT ARDUINO SCRIPT UPLOADED? [***]")
-input("-- Press ENTER if ready to go --")
 # Initialize serial communication with Arduino
 arduino = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 print('[*] Connecting to Arduino')
 time.sleep(2)  # Wait for Arduino to initialize
 print('[*] Arduino connected')
 
+familiarization_signals = [
+    {"modality": "Pressure", "signal": [2, 1, 0]},
+    {"modality": "Pressure", "signal": [2, 4, 0]},
+    {"modality": "Area", "signal": [4, 1, 0]},
+    {"modality": "Area", "signal": [4, 4, 0]},
+    {"modality": "Frequency", "signal": [4, 0, 1]},
+    {"modality": "Frequency", "signal": [4, 0, 4]},
+]
 
 def loadHapticSignals(config_id: int) -> list:
     """Load haptic signals for a selected configuration."""
@@ -75,14 +81,13 @@ def loadHapticSignals(config_id: int) -> list:
     signals = data.get("haptic_signals", [])
     
 	# Randomly (IID) select 10 signals from the set
-    n = 8
+    n = 3
     if n > len(signals):
           raise ValueError(f"Requested {n} signals, but only {len(signals)} available.")
     signals = random.sample(signals,n)
 	
     # random.shuffle(signals)
     return signals
-
 
 
 def send_haptic_signal(haptic_signal):
@@ -229,34 +234,50 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 				print(f"--- Saved Trial as {trial_filename}")
 				shutdown = True
 
+def run_familiarization():
+    print("\n[*] Starting familiarization phase.")
+    print("You will now feel the LOW and HIGH levels of each modality.\n")
+    
+    for i, sig in enumerate(familiarization_signals):
+        print(f"[{i+1}/{len(familiarization_signals)}] Modality: {sig['modality']}, Signal: {sig['signal']}")
+        send_haptic_signal(sig)
+
+        print("Press A to proceed to the next signal.")
+        while True:
+            A_pressed, _, _, _, _, _ = joystick.getInput()
+            if A_pressed:
+                send_end_signal()
+                time.sleep(0.5)
+                break
+            time.sleep(0.1)
+
+    print("[*] Familiarization complete.\n")
 
 
 if __name__=="__main__": 
-	"""
+    """
 	You can set name of recordings as input arguments in terminal
 	"""
+    input("Press ENTER to continue")
+    save_path = f"user_data/test_trials/"   
+    os.makedirs(save_path, exist_ok=True)
+    
+    input("Press ENTER to start familiarization round :)")
+    run_familiarization()
 
-	folder_name = input("Enter folder name for saving trial data: ").strip()
-	save_path = f"user_data/{folder_name}/"
-
-
-	print("Which configuration are you testing?")
-	print("(1) Overload (P:FA)\n(2) Pressure-Area\n(3) Pressure-Frequency\n(4) Area-Frequency")
-	config_id = int(input("Enter configuration number (1-4): ").strip())
-
-	save_path = f"user_data/{folder_name}/"
-	os.makedirs(save_path, exist_ok=True)
-      
-	# haptic_signals = loadHapticSignals()
-	haptic_signals = load_or_generate_trials(save_path, config_id)
-
-	print(f"Total haptic signals loaded: {len(haptic_signals)}")
-	total_trials = len(haptic_signals)
-      
-	completed_trials = get_completed_trials(save_path)
-
-	for num, haptic_signal in enumerate(haptic_signals):
-		if (num + 1) in completed_trials:
-			print(f"[*] Skipping trial {num + 1}, already completed.")
-			continue  # Skip if already done
-		main(save_path, num, haptic_signal)
+    print("TRIALS. Testing configuration 3 (Pressure-Frequency)")
+    config_id = 3
+    
+    # haptic_signals = loadHapticSignals()
+    haptic_signals = load_or_generate_trials(save_path, config_id)
+    
+    print(f"Total haptic signals loaded: {len(haptic_signals)}")
+    total_trials = len(haptic_signals)
+    
+    completed_trials = get_completed_trials(save_path)
+    
+    for num, haptic_signal in enumerate(haptic_signals):
+        if (num + 1) in completed_trials:
+            print(f"[*] Skipping trial {num + 1}, already completed.")
+            continue  # Skip if already done
+        main(save_path, num, haptic_signal)
