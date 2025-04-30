@@ -77,8 +77,8 @@ def main():
     my_event = pygame.USEREVENT + 1
     done = False
     textbox1.setText(f"Pressure:  {int(P[0, 0] * 10)}/10")
-    textbox2.setText(f"Frequency: {int(P[1, 1] * 10)}/10")
-    textbox3.setText(f"Area:      {int(P[2, 2] * 10)}/10")
+    textbox2.setText(f"Area:      {int(P[1, 1] * 10)}/10")
+    textbox3.setText(f"Frequency: {int(P[2, 2] * 10)}/10")
     while not done:
         events = pygame.event.get()
         win.fill((255, 255, 255))
@@ -94,14 +94,14 @@ def main():
                 P[1, 1] = slider2.getValue() / 10
                 P[2, 2] = slider3.getValue() / 10
                 textbox1.setText(f"Pressure:  {int(P[0, 0] * 10)}/10")
-                textbox2.setText(f"Frequency: {int(P[1, 1] * 10)}/10")
-                textbox3.setText(f"Area:      {int(P[2, 2] * 10)}/10")
+                textbox2.setText(f"Area:      {int(P[1, 1] * 10)}/10")
+                textbox3.setText(f"Frequency: {int(P[2, 2] * 10)}/10")
                 done = True
         pygame_widgets.update(events)
         pygame.display.update()
         textbox1.setText(f"Pressure:  {int(P[0, 0] * 10)}/10")
-        textbox2.setText(f"Frequency: {int(P[1, 1] * 10)}/10")
-        textbox3.setText(f"Area:      {int(P[2, 2] * 10)}/10")
+        textbox2.setText(f"Area:      {int(P[1, 1] * 10)}/10")
+        textbox3.setText(f"Frequency: {int(P[2, 2] * 10)}/10")
     W = construct_saliency(P, gamma=0.25)
     """4x4 interface"""
     igs, perms, idxs = ig_optimal(
