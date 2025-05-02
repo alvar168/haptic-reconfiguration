@@ -1,9 +1,9 @@
 const int PINS[] = {22, 23, 24, 25, 26, 27, 28, 29, 30, 31}; // Solenoids 1–9 → Pins 22–30
 const int t_s = 300; // spacing for area level patterns
-const int freqDuration = 3000; // total frequency duration per trial
+const int freqDuration = 2000; // total frequency duration per trial
 
 String input = "";
-const int t_signal = 3000;
+const int t_signal = 2500;
 
 void setup() {
   Serial.begin(9600);
