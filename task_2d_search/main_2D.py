@@ -9,6 +9,7 @@ import serial
 import random
 import json
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 from utils import *
 
@@ -163,23 +164,87 @@ def give_user_feedback(trial_data):
 	correct_y = signal[2]
 
 	# Manhattan error
-	mahattan_error = abs(guessed_x - correct_x) + abs(guessed_y- correct_y)
+	manhattan_error = abs(guessed_x - correct_x) + abs(guessed_y- correct_y)
 	
 	# Euclidean error
 	correct_xy = np.array([
 		origin_xy[0] + correct_x*spacing,
 		origin_xy[1] + correct_y * spacing
 	])
-	euclidean_error = np.lingalg.norm(end_xy - correct_x)
+	euclidean_error = np.linalg.norm(end_xy - correct_xy)
 
 	# Feedback
 	print("\n TRIAL FEEDBACK: ")
 	print(f" - Target Position  : ({correct_x}, {correct_y})")
 	print(f" - Your response    : ({guessed_x}, {guessed_y})")
-	print(f" - Manhattan Distance: {mahattan_error} grid cells")
+	print(f" - Manhattan Distance: {manhattan_error} grid cells")
 	print("----------------------------------------------------\n")
-	
 
+	# Plot
+	fig, ax = plt.subplots()
+	ax.set_title("Trial Feedback")
+	ax.set_xlabel("X")
+	ax.set_ylabel("Y")
+	ax.set_aspect('equal')
+
+	# Plot grid lines (assuming a 5x5 grid for generality)
+	grid_size = 5
+	x_ticks = [origin_xy[0] + i * spacing for i in range(grid_size)]
+	y_ticks = [origin_xy[1] + i * spacing for i in range(grid_size)]
+
+	ax.set_xticks(x_ticks)
+	ax.set_yticks(y_ticks)
+	ax.grid(True, linestyle='--', color='lightgray')
+
+	# Set axis limits to frame the full grid + margin
+	ax.set_xlim(min(x_ticks) - spacing/2, max(x_ticks) + spacing/2)
+	ax.set_ylim(min(y_ticks) - spacing/2, max(y_ticks) + spacing/2)
+
+	for i in range(1, grid_size):
+		for j in range(1, grid_size):
+			gx = origin_xy[0] + i * spacing
+			gy = origin_xy[1] + j * spacing
+			# ax.plot(gx, gy, marker='o', color='lightgray', markersize=4, alpha=0.6)
+			plt.text(gx, gy, f"{i},{j}", fontsize=10, ha='center', va='center', color='gray')
+
+	# Plot trajectory
+	trajectory = np.array(trial_data["xyz_euler"])[:, :2]
+	ax.plot(trajectory[:, 0], trajectory[:, 1], linestyle='-', color='gray', label='Trajectory')
+
+	# Mark origin
+	ax.plot(origin_xy[0], origin_xy[1], marker='o', color='blue', label='Origin')
+
+	# Mark correct and guessed
+	ax.scatter(correct_xy[0], correct_xy[1], color='green', s=100, marker='s', label='Correct')
+	ax.scatter(end_xy[0], end_xy[1], color='red', s=100, marker='x', label='Guessed')
+
+
+	# Flip Y-axis to match layout
+	# ax.invert_yaxis()
+
+	# Text annotation
+	text_str= (
+		f"Trial {trial_data['trial_number']}\n"
+		f"Correct position: ({correct_x}, {correct_y})\n"
+		f"Guessed position: ({guessed_x}, {guessed_y})\n"
+		f"Manhattan Distance: {manhattan_error} grid cells"
+	)
+	# plt.text(0.01, 0.99, text_str, transform=plt.gca().transAxes,
+	# 	  verticalalignment='top', horizontalalignment='left',
+	# 	  bbox=dict(facecolor='white', alpha=0.8))
+	
+	# Place it outside the axes — for example, top-right margin of the figure
+	fig.text(0.98, 0.98, text_str, ha='right', va='top', fontsize=10,
+         bbox=dict(facecolor='white', alpha=0.9, edgecolor='gray'))
+
+	plt.tight_layout()
+	
+	plot_name = f"trial_{trial_data['trial_number']}.png"
+	plot_path = os.path.join(save_path, plot_name)
+	plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+	print(f"[+] Plot saved to {plot_path}")
+	
+	plt.show()
 
 
 def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
