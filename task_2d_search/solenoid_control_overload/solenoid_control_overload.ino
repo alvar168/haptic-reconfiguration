@@ -1,9 +1,9 @@
 const int PINS[] = {22, 23, 24, 25, 26, 27, 28, 29, 30, 31}; // Solenoids 1–9 → Pins 22–30
 const int t_s = 300; // spacing for area level patterns
-const int freqDuration = 3000; // total frequency duration per trial
+const int freqDuration = 2000; // total frequency duration per trial
 
 String input = "";
-const int t_signal = 3000;
+const int t_signal = 2500;
 
 void setup() {
   Serial.begin(9600);
@@ -40,15 +40,28 @@ void loop() {
 
 void handleSignal(int config, int x, int y) {
   switch (config) {
+    case 1: // Overload: Pressure (X), Frequency + Area (Y)
+      // const int freqDuration = 2000; 
+      // const int t_signal = 2000;
+      playPressureLevel(mapToPressure(x));
+      delay(t_signal);
+      resetAllPins();
+      delay(500);
+      playFrequencyLevel(mapToFrequency(y));
+      delay(500);
+      playAreaLevel(mapToArea(y));
+      delay(t_signal);
+      resetAllPins();
+      break;
     case 2: // Pressure-Area
       if (x != 0) {
-        playPressureLevel(mapToPressure_7(x));
+        playPressureLevel(mapToPressure(x));
         delay(t_signal);
         resetAllPins();
         delay(500);
       }
       if (y != 0) {
-        playAreaLevel(mapToArea_3(y));
+        playAreaLevel(mapToArea(y));
         delay(t_signal);
         resetAllPins();
       }
@@ -56,13 +69,13 @@ void handleSignal(int config, int x, int y) {
 
     case 3: // Pressure-Frequency
       if (x != 0) {
-        playPressureLevel(mapToPressure_7(x));
+        playPressureLevel(mapToPressure(x));
         delay(t_signal);
         resetAllPins();
         delay(500);
       }
       if (y != 0) {
-        playFrequencyLevel(mapToFrequency_3(y));
+        playFrequencyLevel(mapToFrequency(y));
         delay(t_signal);
         resetAllPins();
       }
@@ -70,31 +83,13 @@ void handleSignal(int config, int x, int y) {
 
     case 4: // Area-Frequency
       if (x != 0) {
-        playAreaLevel(mapToArea_7(x));
+        playAreaLevel(mapToArea(x));
         delay(t_signal);
         resetAllPins();
         delay(500);
       }
       if (y != 0) {
-        playFrequencyLevel(mapToFrequency_3(y));
-        delay(t_signal);
-        resetAllPins();
-      }
-      break;
-
-    case 5: // Overload: Pressure + Frequency (X), Area (Y)
-      if (x != 0){
-        playPressureLevel(mapToPressure_7(x));
-        delay(t_signal);
-        resetAllPins();
-        playFrequencyLevel(mapToFrequency_7(x));
-        // delay(t_signal);
-        resetAllPins();
-        delay(500);
-      }
-      if (y != 0) {
-        Serial.println("Playing Area (Y axis)");
-        playAreaLevel(mapToArea_3(y));
+        playFrequencyLevel(mapToFrequency(y));
         delay(t_signal);
         resetAllPins();
       }
@@ -107,34 +102,21 @@ void handleSignal(int config, int x, int y) {
 
 // ------------------------ MAPPING FUNCTIONS --------------------------
 
-int mapToFrequency_3(int point) {
+int mapToPressure(int point) {
+  return constrain(point, 1, 4); // point 1–4 → level 1–4
+}
+
+int mapToFrequency(int point) {
   if (point <= 2) return 1; // level 1 → points 1, 2
-  else return 2;            // level 2 → points 3
+  else return 2;            // level 2 → points 3, 4
 }
 
-int mapToArea_3(int point) {
-  if (point == 1) return 1;         // Y = 1
-  else if (point == 2) return 2;    // Y = 2
-  else return 3;                    // Y = 3
-}
-
-int mapToArea_7(int point) {
-  if (point <= 2) return 1;
-  else if (point <= 5) return 2;
+int mapToArea(int point) {
+  if (point == 1) return 1;
+  else if (point <= 3) return 2;
   else return 3;
 }
 
-int mapToPressure_7(int point) {
-  if (point <= 2) return 1;       // point = 1,2
-  else if (point <= 4) return 2;  // point = 3,4
-  else if (point <= 6) return 3;  // point = 5,6
-  else return 4;                  // point = 7
-}
-
-int mapToFrequency_7(int point) {
-  if (point <= 4) return 1;       // point = 1-4
-  else return 2;                  // point = 5-7
-}
 
 // ------------------------- PLAYBACK FUNCTIONS ------------------------
 
