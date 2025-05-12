@@ -1,9 +1,9 @@
 const int PINS[] = {22, 23, 24, 25, 26, 27, 28, 29, 30, 31}; // Solenoids 1–9 → Pins 22–30
 const int t_s = 300; // spacing for area level patterns
-const int freqDuration = 2000; // total frequency duration per trial
+const int freqDuration = 3000; // total frequency duration per trial
 
 String input = "";
-const int t_signal = 2000;
+const int t_signal = 3000;
 
 void setup() {
   Serial.begin(9600);
@@ -41,6 +41,8 @@ void loop() {
 void handleSignal(int config, int x, int y) {
   switch (config) {
     case 1: // Overload: Pressure (X), Frequency + Area (Y)
+      // const int freqDuration = 2000; 
+      // const int t_signal = 2000;
       playPressureLevel(mapToPressure(x));
       delay(t_signal);
       resetAllPins();
@@ -122,8 +124,8 @@ void playPressureLevel(int level) {
   int pin_main = PINS[level - 1];  // solenoid 1–4 → pin 22–25
   int pin_common = PINS[4];        // solenoid 5 → pin 26
   Serial.print("Playing Pressure level "); Serial.println(level);
-  digitalWrite(pin_main, HIGH);
   digitalWrite(pin_common, HIGH);
+  digitalWrite(pin_main, HIGH);
 }
 
 void playFrequencyLevel(int level) {

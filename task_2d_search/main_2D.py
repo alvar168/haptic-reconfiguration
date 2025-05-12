@@ -54,85 +54,131 @@ print('[*] Connecting to Arduino')
 time.sleep(2)  # Wait for Arduino to initialize
 print('[*] Arduino connected')
 
+CONFIG_MODALITIES = {
+	1: ("P", "A"), # Overload, judge by Area although it is A+F
+	2: ("P", "A"), 
+	3: ("P", "F"), 
+	4: ("A", "F")
+}
+
 
 def loadHapticSignals(config_id: int) -> list:
-    """Load haptic signals for a selected configuration."""
-    config_map = {
-        1: "overload_signals.json",
-        2: "pressure_area_signals.json",
-        3: "pressure_frequency_signals.json",
-        4: "area_frequency_signals.json"
-    }
+	"""Load haptic signals for a selected configuration."""
+	config_map = {
+		1: "overload_signals.json",
+		2: "pressure_area_signals.json",
+		3: "pressure_frequency_signals.json",
+		4: "area_frequency_signals.json"
+	}
 
-    filename = config_map.get(config_id)
-    if not filename:
-        raise ValueError("Invalid configuration selected.")
-
-    filepath = os.path.join("signals", filename)
-    with open(filepath, 'r', encoding="utf-8") as f:
-        data = json.load(f)
-
-    signals = data.get("haptic_signals", [])
-    
-	# Randomly (IID) select 10 signals from the set
-    n = 8
-    if n > len(signals):
-          raise ValueError(f"Requested {n} signals, but only {len(signals)} available.")
-    signals = random.sample(signals,n)
+	filename = config_map.get(config_id)
 	
-    # random.shuffle(signals)
-    return signals
+	if not filename:
+		raise ValueError("Invalid configuration selected.")
+
+	filepath = os.path.join("signals", filename)
+	with open(filepath, 'r', encoding="utf-8") as f:
+		data = json.load(f)
+
+	signals = data.get("haptic_signals", [])
+	
+	# Randomly (IID) select 10 signals from the set
+	n = 8
+	if n > len(signals):
+		raise ValueError(f"Requested {n} signals, but only {len(signals)} available.")
+	
+	signals = random.sample(signals,n)
+	
+	# random.shuffle(signals)
+	return signals
 
 
 
 def send_haptic_signal(haptic_signal):
-    """Send haptic signal to Arduino via serial."""
-    signal_str = ",".join(map(str, haptic_signal["signal"]))
-    arduino.flush()
-    time.sleep(0.1)
-    arduino.write((signal_str + "\n").encode())  # Send to Arduino
-    print(f"[*] Sending haptic signal: {signal_str}")
+	"""Send haptic signal to Arduino via serial."""
+	signal_str = ",".join(map(str, haptic_signal["signal"]))
+	arduino.flush()
+	time.sleep(0.1)
+	arduino.write((signal_str + "\n").encode())  # Send to Arduino
+	print(f"[*] Sending haptic signal: {signal_str}")
 
 def send_end_signal():
-    """Send '0' to Arduino to deflate all solenoids."""
-    arduino.write(b"0\n")
-    print("[*] Sending deflate signal: 0")
+	"""Send '0' to Arduino to deflate all solenoids."""
+	arduino.write(b"0\n")
+	print("[*] Sending deflate signal: 0")
 
 def save_trial_order():
-    trial_order_file = os.path.join(save_path, "trial_order.json")
-    with open(trial_order_file, "w") as f:
-        json.dump(haptic_signals, f, indent=4)
-    print(f"[*] Saved trial order to {trial_order_file}")
-    
+	trial_order_file = os.path.join(save_path, "trial_order.json")
+	with open(trial_order_file, "w") as f:
+		json.dump(haptic_signals, f, indent=4)
+	print(f"[*] Saved trial order to {trial_order_file}")
+	
 def load_or_generate_trials(save_path, config_id: int):
-    trial_order_file = os.path.join(save_path, "trial_order.json")
-    
-    if os.path.exists(trial_order_file):
-        print("[*] Loading saved trial order.")
-        with open(trial_order_file, "r") as f:
-            haptic_signals = json.load(f)
-    else:
-        print("[*] Generating new randomized trial order.")
-        haptic_signals = loadHapticSignals(config_id)
-        with open(trial_order_file, "w") as f:
-            json.dump(haptic_signals, f, indent=4)
-        print(f"[*] Saved new trial order to {trial_order_file}")
+	trial_order_file = os.path.join(save_path, "trial_order.json")
+	
+	if os.path.exists(trial_order_file):
+		print("[*] Loading saved trial order.")
+		with open(trial_order_file, "r") as f:
+			haptic_signals = json.load(f)
+	else:
+		print("[*] Generating new randomized trial order.")
+		haptic_signals = loadHapticSignals(config_id)
+		with open(trial_order_file, "w") as f:
+			json.dump(haptic_signals, f, indent=4)
+		print(f"[*] Saved new trial order to {trial_order_file}")
 
-    return haptic_signals
+	return haptic_signals
 
 
 def get_completed_trials(save_path):
-    """Check which trials have already been saved, ignoring trial_order.json."""
-    completed_trials = set()
-    if os.path.exists(save_path):
-        for filename in os.listdir(save_path):
-            if filename.startswith("trial_") and filename.endswith(".json"):
-                try:
-                    trial_num = int(filename.split("_")[1].split(".")[0])  # Extract trial number
-                    completed_trials.add(trial_num)
-                except ValueError:
-                    print(f"[*] Skipping non-trial file: {filename}")
-    return completed_trials
+	"""Check which trials have already been saved, ignoring trial_order.json."""
+	completed_trials = set()
+	if os.path.exists(save_path):
+		for filename in os.listdir(save_path):
+			if filename.startswith("trial_") and filename.endswith(".json"):
+				try:
+					trial_num = int(filename.split("_")[1].split(".")[0])  # Extract trial number
+					completed_trials.add(trial_num)
+				except ValueError:
+					print(f"[*] Skipping non-trial file: {filename}")
+	return completed_trials
+
+def give_user_feedback(trial_data):
+	
+	config_id = trial_data["config_id"]
+	signal = trial_data["haptic_signal"]["signal"]
+	x_modality, y_modality = CONFIG_MODALITIES[config_id]
+
+	# Grid parameters
+	spacing = 0.075
+	origin_xy = np.array(trial_data["start_position"][:2])
+	end_xy = np.array(trial_data["end_position"][:2])
+	
+	# Guessed grid index from origin position
+	guessed_x = round((end_xy[0] - origin_xy[0]) / spacing)
+	guessed_y = round((end_xy[1] - origin_xy[1]) / spacing)
+
+	# Correct signal indices
+	correct_x = signal[1]
+	correct_y = signal[2]
+
+	# Manhattan error
+	mahattan_error = abs(guessed_x - correct_x) + abs(guessed_y- correct_y)
+	
+	# Euclidean error
+	correct_xy = np.array([
+		origin_xy[0] + correct_x*spacing,
+		origin_xy[1] + correct_y * spacing
+	])
+	euclidean_error = np.lingalg.norm(end_xy - correct_x)
+
+	# Feedback
+	print("\n TRIAL FEEDBACK: ")
+	print(f" - Target Position  : ({correct_x}, {correct_y})")
+	print(f" - Your response    : ({guessed_x}, {guessed_y})")
+	print(f" - Manhattan Distance: {mahattan_error} grid cells")
+	print("----------------------------------------------------\n")
+	
 
 
 
@@ -145,8 +191,8 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 		- Move robot to home position.
 		- Press A to start trial (sends haptic feedback to Arduino).
 		- User moves based on feedback.
-    	- Press B to finish the trial.
-    	- Press X to save the data.
+		- Press B to finish the trial.
+		- Press X to save the data.
 	'''
 
 	## parameters	
@@ -164,9 +210,9 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 	print(f"[*] Trial {num + 1} / {total_trials}")
 	print("[*] Move the robot to the home position.")
 	input("[*] Press Enter when ready.")
-    
+	
 	assert haptic_signal["signal"][0] == config_id, \
-    f"Config ID mismatch: expected {config_id}, got {haptic_signal['signal'][0]}"
+	f"Config ID mismatch: expected {config_id}, got {haptic_signal['signal'][0]}"
 
 
 	while not shutdown:
@@ -217,8 +263,8 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 					"time": data["time"],
 					"joint_positions": [list(q) for q in data["joint_positions"]],  # Convert arrays to lists
 					"xyz_euler": [list(xyz) for xyz in data["xyz_euler"]],  # Convert arrays to lists
-                    "start_position": list(data["xyz_euler"][0]) if data["xyz_euler"] else None,
-                    "end_position": list(data["xyz_euler"][-1]) if data["xyz_euler"] else None,
+					"start_position": list(data["xyz_euler"][0]) if data["xyz_euler"] else None,
+					"end_position": list(data["xyz_euler"][-1]) if data["xyz_euler"] else None,
 					"haptic_signal": data["haptic_signal"]  # Already a list
 				}
 
@@ -227,6 +273,8 @@ def main(save_path: str, num: int, haptic_signal: dict, thresh: float=0.05):
 					json.dump(data_serializable, file, indent=4)
 
 				print(f"--- Saved Trial as {trial_filename}")
+
+				give_user_feedback(data_serializable)
 				shutdown = True
 
 
@@ -246,13 +294,13 @@ if __name__=="__main__":
 
 	save_path = f"user_data/{folder_name}/"
 	os.makedirs(save_path, exist_ok=True)
-      
+	  
 	# haptic_signals = loadHapticSignals()
 	haptic_signals = load_or_generate_trials(save_path, config_id)
 
 	print(f"Total haptic signals loaded: {len(haptic_signals)}")
 	total_trials = len(haptic_signals)
-      
+	  
 	completed_trials = get_completed_trials(save_path)
 
 	for num, haptic_signal in enumerate(haptic_signals):
