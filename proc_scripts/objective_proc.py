@@ -1,3 +1,4 @@
+from re import I
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -63,47 +64,72 @@ def objid_helper(d):
 
 
 def objid():
+    """
+    2: PA
+    3: PF
+    4: AF
+    PAF
+    """
     preferred_confs = [
-        2,
-        2,
-        2,
-        2,
-        3,
-        2,
+        [2, 4, 3],
+        [2, 3, 4],
+        [2, 3, 4],
+        [2, 3, 4],
+        [3, 2, 4],
+        [2, 4, 3],
+        [2, 3, 4],
+        [2, 3, 4],
+        [2, 3, 4],
+        [4, 2, 3],
+        [2, 4, 3],
+        [3, 2, 4],
+        [3, 2, 4],
     ]
-    # ripped from subjective
 
     pa_error = []
     pf_error = []
     af_error = []
-    ov_error = []
 
     pa_class = []
     pf_class = []
     af_class = []
-    ov_class = []
 
     pa_time = []
     pf_time = []
     af_time = []
-    ov_time = []
 
-    pref_error = []
-    unpref_error = []
+    error_1 = []
+    error_2 = []
+    error_3 = []
 
-    pref_class = []
-    unpref_class = []
+    class_1 = []
+    class_2 = []
+    class_3 = []
 
-    pref_time = []
-    unpref_time = []
+    time_1 = []
+    time_2 = []
+    time_3 = []
 
-    filenames = glob("first_six_objid/*/trial_?.json")
+    error_ne_2_1 = []
+    error_ne_2_2 = []
+    error_ne_2_3 = []
+
+    class_ne_2_1 = []
+    class_ne_2_2 = []
+    class_ne_2_3 = []
+
+    time_ne_2_1 = []
+    time_ne_2_2 = []
+    time_ne_2_3 = []
+
+    filenames = glob("new_data/obj_ID_13/*/trial_?.json")
     filenames.sort()
     for f in filenames:
         with open(f, "r") as fh:
             data = json.load(fh)
-        s = "first_six_objid/s"
-        user_idx = int(f[len(s)]) - 1  # trust me bro
+        s = "new_data/obj_ID_13/s_"
+        til_next__ = f[len(s) :].find("_")
+        user_idx = int(f[len(s) : len(s) + til_next__]) - 1  # trust me bro
         bowl_idx, plate_idx = objid_helper(data)
         true_bowl_idx, true_plate_idx = [
             i - 1 for i in data["haptic_signal"]["signal"][1:]
@@ -118,14 +144,35 @@ def objid():
             c = int(bowl_idx != true_bowl_idx) + int(plate_idx != true_plate_idx)
             pa_class.append(c)
             pa_time.append(data["duration_sec"])
-            if configuration == preferred_confs[user_idx]:
-                pref_error.append(e)
-                pref_class.append(c)
-                pref_time.append(data["duration_sec"])
+            if configuration == preferred_confs[user_idx][0]:
+                error_1.append(e)
+                class_1.append(c)
+                time_1.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_1.append(e)
+                    class_ne_2_1.append(c)
+                    time_ne_2_1.append(data["duration_sec"])
+            elif configuration == preferred_confs[user_idx][1]:
+                error_2.append(e)
+                class_2.append(c)
+                time_2.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_2.append(e)
+                    class_ne_2_2.append(c)
+                    time_ne_2_2.append(data["duration_sec"])
+            elif configuration == preferred_confs[user_idx][2]:
+                error_3.append(e)
+                class_3.append(c)
+                time_3.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_3.append(e)
+                    class_ne_2_3.append(c)
+                    time_ne_2_3.append(data["duration_sec"])
             else:
-                unpref_error.append(e)
-                unpref_class.append(c)
-                unpref_time.append(data["duration_sec"])
+                raise Exception
 
         elif configuration == 3:
             """PF"""
@@ -136,14 +183,35 @@ def objid():
             c = int(bowl_idx != true_bowl_idx) + int(plate_idx != true_plate_idx)
             pf_class.append(c)
             pf_time.append(data["duration_sec"])
-            if configuration == preferred_confs[user_idx]:
-                pref_error.append(e)
-                pref_class.append(c)
-                pref_time.append(data["duration_sec"])
+            if configuration == preferred_confs[user_idx][0]:
+                error_1.append(e)
+                class_1.append(c)
+                time_1.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_1.append(e)
+                    class_ne_2_1.append(c)
+                    time_ne_2_1.append(data["duration_sec"])
+            elif configuration == preferred_confs[user_idx][1]:
+                error_2.append(e)
+                class_2.append(c)
+                time_2.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_2.append(e)
+                    class_ne_2_2.append(c)
+                    time_ne_2_2.append(data["duration_sec"])
+            elif configuration == preferred_confs[user_idx][2]:
+                error_3.append(e)
+                class_3.append(c)
+                time_3.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_3.append(e)
+                    class_ne_2_3.append(c)
+                    time_ne_2_3.append(data["duration_sec"])
             else:
-                unpref_error.append(e)
-                unpref_class.append(c)
-                unpref_time.append(data["duration_sec"])
+                raise Exception
         elif configuration == 4:
             """AF"""
             e = np.sqrt(
@@ -153,165 +221,221 @@ def objid():
             c = int(bowl_idx != true_bowl_idx) + int(plate_idx != true_plate_idx)
             af_class.append(c)
             af_time.append(data["duration_sec"])
-            if configuration == preferred_confs[user_idx]:
-                pref_error.append(e)
-                pref_class.append(c)
-                pref_time.append(data["duration_sec"])
+            if configuration == preferred_confs[user_idx][0]:
+                error_1.append(e)
+                class_1.append(c)
+                time_1.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_1.append(e)
+                    class_ne_2_1.append(c)
+                    time_ne_2_1.append(data["duration_sec"])
+            elif configuration == preferred_confs[user_idx][1]:
+                error_2.append(e)
+                class_2.append(c)
+                time_2.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_2.append(e)
+                    class_ne_2_2.append(c)
+                    time_ne_2_2.append(data["duration_sec"])
+            elif configuration == preferred_confs[user_idx][2]:
+                error_3.append(e)
+                class_3.append(c)
+                time_3.append(data["duration_sec"])
+                if preferred_confs[user_idx][0] != 2:
+                    """these are unique"""
+                    error_ne_2_3.append(e)
+                    class_ne_2_3.append(c)
+                    time_ne_2_3.append(data["duration_sec"])
             else:
-                unpref_error.append(e)
-                unpref_class.append(c)
-                unpref_time.append(data["duration_sec"])
-        elif configuration == 5:
-            """OVERLOAD"""
-            ov_error.append(
-                np.sqrt(
-                    (bowl_idx - true_bowl_idx) ** 2 + (plate_idx - true_plate_idx) ** 2
-                )
-            )
-            c = int(bowl_idx != true_bowl_idx) + int(plate_idx != true_plate_idx)
-            ov_class.append(c)
-            ov_time.append(data["duration_sec"])
+                raise Exception
+
         else:
             raise NotImplementedError("wtf?")
     print("PA MSE", np.mean(pa_error))
     print("PF MSE", np.mean(pf_error))
     print("AF MSE", np.mean(af_error))
-    print("OV MSE", np.mean(ov_error))
 
     print("PA CLASS", np.mean(pa_class))
     print("PF CLASS", np.mean(pf_class))
     print("AF CLASS", np.mean(af_class))
-    print("OV CLASS", np.mean(ov_class))
 
-    print("PREF MSE", np.mean(pref_error), np.std(pref_error))
-    print("UNPREF MSE", np.mean(unpref_error), np.std(unpref_error))
-    print("PREF CLASS", np.mean(pref_class), np.std(pref_class))
-    print("UNPREF CLASS", np.mean(unpref_class), np.std(unpref_class))
+    print("1 MSE", np.mean(error_1), np.std(error_1))
+    print("2 MSE", np.mean(error_2), np.std(error_2))
+    print("3 MSE", np.mean(error_3), np.std(error_3))
+
+    print("1 CLASS", np.mean(class_1), np.std(class_1))
+    print("2 CLASS", np.mean(class_2), np.std(class_2))
+    print("3 CLASS", np.mean(class_3), np.std(class_3))
 
     plt.bar(
-        [0.5, 1.5, 2.5, 3.5, 5.0, 6.0, 7.0, 8.0],
+        [0.5, 1.5, 2.5, 4.0, 5.0, 6.0],
         [
-            np.mean(ov_error),
             np.mean(pa_error),
             np.mean(pf_error),
             np.mean(af_error),
-            np.mean(ov_class),
             np.mean(pa_class),
             np.mean(pf_class),
             np.mean(af_class),
         ],
         yerr=[
-            (1.0 / np.sqrt(6.0)) * np.mean(ov_error),
             (1.0 / np.sqrt(6.0)) * np.mean(pa_error),
             (1.0 / np.sqrt(6.0)) * np.mean(pf_error),
             (1.0 / np.sqrt(6.0)) * np.mean(af_error),
-            (1.0 / np.sqrt(6.0)) * np.mean(ov_class),
             (1.0 / np.sqrt(6.0)) * np.mean(pa_class),
             (1.0 / np.sqrt(6.0)) * np.mean(pf_class),
             (1.0 / np.sqrt(6.0)) * np.mean(af_class),
-        ],
-        color=["g", "g", "g", "g", "b", "b", "b", "b"],
-    )
-    plt.xticks(
-        [0.5, 1.5, 2.5, 3.5, 5.0, 6.0, 7.0, 8.0],
-        [
-            "overload",
-            "pa",
-            "pf",
-            "af",
-            "overload",
-            "pa",
-            "pf",
-            "af",
-        ],
-        rotation=90,
-    )
-    plt.title("MSE and CLASS error (7x3)")
-    plt.show()
-
-    plt.bar(
-        [0.5, 1.5, 2.5, 4.0, 5.0, 6.0],
-        [
-            np.mean(ov_error),
-            np.mean(pref_error),
-            np.mean(unpref_error),
-            np.mean(ov_class),
-            np.mean(pref_class),
-            np.mean(unpref_class),
-        ],
-        yerr=[
-            (1.0 / np.sqrt(6.0)) * np.std(ov_error),
-            (1.0 / np.sqrt(6.0)) * np.std(pref_error),
-            (1.0 / np.sqrt(6.0)) * np.std(unpref_error),
-            (1.0 / np.sqrt(6.0)) * np.std(ov_class),
-            (1.0 / np.sqrt(6.0)) * np.std(pref_class),
-            (1.0 / np.sqrt(6.0)) * np.std(unpref_class),
         ],
         color=["g", "g", "g", "b", "b", "b"],
     )
     plt.xticks(
         [0.5, 1.5, 2.5, 4.0, 5.0, 6.0],
-        ["overload", "pref", "unpref", "overload", "pref", "unpref"],
-        rotation=90,
-    )
-    plt.title("MSE and CLASS error (7x3)")
-    plt.show()
-
-    plt.bar(
-        [0.5, 1.5, 2.5, 3.5],
         [
-            np.mean(ov_time),
-            np.mean(pa_time),
-            np.mean(pf_time),
-            np.mean(af_time),
-        ],
-        yerr=[
-            (1.0 / np.sqrt(6.0)) * np.mean(ov_time),
-            (1.0 / np.sqrt(6.0)) * np.mean(pa_time),
-            (1.0 / np.sqrt(6.0)) * np.mean(pf_time),
-            (1.0 / np.sqrt(6.0)) * np.mean(af_time),
-        ],
-        color=["g", "g", "g", "g"],
-    )
-    plt.xticks(
-        [0.5, 1.5, 2.5, 3.5],
-        [
-            "overload",
+            "pa",
+            "pf",
+            "af",
             "pa",
             "pf",
             "af",
         ],
         rotation=90,
     )
-    plt.title("Time per Configuration (7x3)")
-    plt.show()
+    plt.title("MSE and CLASS error (7x3)")
+    plt.savefig("figures/mse_class_conf.svg")
+    plt.close()
+
+    plt.bar(
+        [0.5, 1.5, 2.5, 4.0, 5.0, 6.0],
+        [
+            np.mean(error_1),
+            np.mean(error_2),
+            np.mean(error_3),
+            np.mean(class_1),
+            np.mean(class_2),
+            np.mean(class_3),
+        ],
+        yerr=[
+            (1.0 / np.sqrt(6.0)) * np.std(error_1),
+            (1.0 / np.sqrt(6.0)) * np.std(error_2),
+            (1.0 / np.sqrt(6.0)) * np.std(error_3),
+            (1.0 / np.sqrt(6.0)) * np.std(class_1),
+            (1.0 / np.sqrt(6.0)) * np.std(class_2),
+            (1.0 / np.sqrt(6.0)) * np.std(class_3),
+        ],
+        color=["g", "g", "g", "b", "b", "b"],
+    )
+    plt.xticks(
+        [0.5, 1.5, 2.5, 4.0, 5.0, 6.0],
+        ["1", "2", "3", "1", "2", "3"],
+        rotation=90,
+    )
+    plt.title("MSE and CLASS error (7x3)")
+    plt.savefig("figures/mse_class_rank.svg")
+    plt.close()
 
     plt.bar(
         [0.5, 1.5, 2.5],
         [
-            np.mean(ov_time),
-            np.mean(pref_time),
-            np.mean(unpref_time),
+            np.mean(pa_time),
+            np.mean(pf_time),
+            np.mean(af_time),
         ],
         yerr=[
-            (1.0 / np.sqrt(6.0)) * np.mean(ov_time),
-            (1.0 / np.sqrt(6.0)) * np.mean(pref_time),
-            (1.0 / np.sqrt(6.0)) * np.mean(unpref_time),
+            (1.0 / np.sqrt(6.0)) * np.mean(pa_time),
+            (1.0 / np.sqrt(6.0)) * np.mean(pf_time),
+            (1.0 / np.sqrt(6.0)) * np.mean(af_time),
         ],
         color=["g", "g", "g"],
     )
     plt.xticks(
         [0.5, 1.5, 2.5],
         [
-            "overload",
-            "pref",
-            "unpref",
+            "pa",
+            "pf",
+            "af",
         ],
         rotation=90,
     )
     plt.title("Time per Configuration (7x3)")
-    plt.show()
+    plt.savefig("figures/time_conf.svg")
+    plt.close()
 
+    plt.bar(
+        [0.5, 1.5, 2.5],
+        [
+            np.mean(time_1),
+            np.mean(time_2),
+            np.mean(time_3),
+        ],
+        yerr=[
+            (1.0 / np.sqrt(6.0)) * np.mean(time_1),
+            (1.0 / np.sqrt(6.0)) * np.mean(time_2),
+            (1.0 / np.sqrt(6.0)) * np.mean(time_3),
+        ],
+        color=["g", "g", "g"],
+    )
+    plt.xticks(
+        [0.5, 1.5, 2.5],
+        ["1", "2", "3"],
+        rotation=90,
+    )
+    plt.title("Time per Configuration (7x3)")
+    plt.savefig("figures/time_rank.svg")
+    plt.close()
+
+    plt.bar(
+        [0.5, 1.5, 2.5, 4.0, 5.0, 6.0],
+        [
+            np.mean(error_ne_2_1),
+            np.mean(error_ne_2_2),
+            np.mean(error_ne_2_3),
+            np.mean(class_ne_2_1),
+            np.mean(class_ne_2_2),
+            np.mean(class_ne_2_3),
+        ],
+        yerr=[
+            (1.0 / np.sqrt(6.0)) * np.std(error_ne_2_1),
+            (1.0 / np.sqrt(6.0)) * np.std(error_ne_2_2),
+            (1.0 / np.sqrt(6.0)) * np.std(error_ne_2_3),
+            (1.0 / np.sqrt(6.0)) * np.std(class_ne_2_1),
+            (1.0 / np.sqrt(6.0)) * np.std(class_ne_2_2),
+            (1.0 / np.sqrt(6.0)) * np.std(class_ne_2_3),
+        ],
+        color=["g", "g", "g", "b", "b", "b"],
+    )
+    plt.xticks(
+        [0.5, 1.5, 2.5, 4.0, 5.0, 6.0],
+        ["1", "2", "3", "1", "2", "3"],
+        rotation=90,
+    )
+    plt.title("MSE and CLASS error (7x3)")
+    plt.savefig("figures/filtered_mse_class_rank.svg")
+    plt.close()
+
+    plt.bar(
+        [0.5, 1.5, 2.5],
+        [
+            np.mean(time_ne_2_1),
+            np.mean(time_ne_2_2),
+            np.mean(time_ne_2_3),
+        ],
+        yerr=[
+            (1.0 / np.sqrt(6.0)) * np.mean(time_ne_2_1),
+            (1.0 / np.sqrt(6.0)) * np.mean(time_ne_2_2),
+            (1.0 / np.sqrt(6.0)) * np.mean(time_ne_2_3),
+        ],
+        color=["g", "g", "g"],
+    )
+    plt.xticks(
+        [0.5, 1.5, 2.5],
+        ["1", "2", "3"],
+        rotation=90,
+    )
+    plt.title("Time per Configuration (7x3)")
+    plt.savefig("figures/filtered_time_rank.svg")
+    plt.close()
+    
     return
 
 
@@ -351,6 +475,8 @@ def main():
 
         plt.plot(np.arange(len(vels)), vels, "g.")
         plt.show()
+        
+
 
 
 if __name__ == "__main__":

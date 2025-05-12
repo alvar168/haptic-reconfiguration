@@ -1,39 +1,56 @@
 import numpy as np
 
 subjective_data = np.loadtxt(
-    "subjective.csv",
+    "subjective2.csv",
     delimiter=",",
-    usecols=list(range(5, 85)),
-    skiprows=1,
+    usecols=list(range(5, 65)),
+    skiprows=2,
 )
 
-orders = [1, 1, 2, 2, 2]
+orders = [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
 confs = [
-    [2, 4, 3, 1, 3, 1, 2, 4],
-    [3, 1, 2, 4, 2, 3, 1, 4],
-    [4, 2, 1, 3, 4, 3, 2, 1],
-    [1, 3, 4, 2, 2, 1, 3, 4],
-    [3, 2, 4, 1, 1, 2, 4, 3],
+    [2, 4, 3, 4, 3, 2],
+    [3, 2, 4, 2, 3, 4],
+    [3, 4, 2, 4, 2, 3],
+    [2, 3, 4, 3, 2, 4],
+    [3, 4, 2, 4, 2, 3],
+    [3, 4, 2, 4, 2, 3],
+    [4, 2, 3, 2, 4, 3],
+    [4, 3, 2, 3, 4, 2],
+    [2, 4, 3, 3, 4, 2],
+    [2, 3, 4, 3, 2, 4],
+    [4, 3, 2, 2, 4, 3],
+    [4, 2, 3, 2, 3, 4],
+    [2, 4, 3, 4, 3, 2],
 ]
 """
-1: overload (ABC)
+1: overload (ABC) ################# THIS IS UNUSED
 2: pressure area (AB)
 3: pressure freq (AC)
 4: area freq (BC)
 """
+# preferred_confs = [
+#     [2, 2],
+#     [2, 2],
+#     [2, 2],
+#     [2, 2],
+#     [3, 3],
+#     [2, 2],  # I DON"T HAVE THIS DATA YET, ASSUMING BEST CASE SCENARIO
+# ]
 preferred_confs = [
-    [2, 2],
-    [2, 2],
-    [2, 2],
-    [2, 2],
-    [3, 3],
-]
-end_preferred_confs = [
-    [3, 3],
-    [2, 2],
-    [2, 2],
-    [2, 2],
-    [2, 2],
+    [[2, 4, 3], [2, 4, 3]],
+    [[2, 3, 4], [2, 3, 4]],
+    [[2, 3, 4], [2, 3, 4]],
+    [[2, 3, 4], [2, 3, 4]],
+    [[3, 2, 4], [3, 2, 4]],
+    [[2, 4, 3], [2, 4, 3]],
+    [[2, 3, 4], [2, 3, 4]],
+    [[2, 3, 4], [2, 3, 4]],
+    [[2, 3, 4], [2, 3, 4]],
+    [[4, 2, 3], [4, 2, 3]],
+    [[2, 4, 3], [2, 4, 3]],
+    [[3, 2, 4], [3, 2, 4]],
+    [[3, 2, 4], [3, 2, 4]],
 ]
 
 
@@ -52,20 +69,20 @@ data7x3 = [[] for _ in range(4)]
 for user_idx, conf in enumerate(confs):
     """for each configuration order of each user"""
     if orders[user_idx] == 1:  # they did 4x4 then 7x3
-        for conf_idx, c in enumerate(conf[:4]):
+        for conf_idx, c in enumerate(conf[:3]):
             """this is the order that the user received the configurations in"""
             z = proc(subjective_data, user_idx, conf_idx * 10)
             data4x4[c - 1].append(z)
-        for conf_idx, c in enumerate(conf[4:]):
-            z = proc(subjective_data, user_idx, 40 + conf_idx * 10)
+        for conf_idx, c in enumerate(conf[3:]):
+            z = proc(subjective_data, user_idx, 30 + conf_idx * 10)
             data7x3[c - 1].append(z)
     elif orders[user_idx] == 2:
-        for conf_idx, c in enumerate(conf[4:]):
+        for conf_idx, c in enumerate(conf[3:]):
             z = proc(subjective_data, user_idx, conf_idx * 10)
             data7x3[c - 1].append(z)
-        for conf_idx, c in enumerate(conf[:4]):
+        for conf_idx, c in enumerate(conf[:3]):
             """this is the order that the user received the configurations in"""
-            z = proc(subjective_data, user_idx, 40 + conf_idx * 10)
+            z = proc(subjective_data, user_idx, 30 + conf_idx * 10)
             data4x4[c - 1].append(z)
 
 
@@ -86,14 +103,12 @@ for conf_idx in range(len(data4x4)):
             post_data4[0] += np.array(data4x4[conf_idx][user_idx])
     else:
         for user_idx, user_data in enumerate(data4x4[conf_idx]):
-            if conf_idx + 1 == preferred_confs[user_idx][0]:
+            if conf_idx + 1 == preferred_confs[user_idx][0][0]:
+                pre_data4[1] += np.array(data4x4[conf_idx][user_idx])
+            elif conf_idx + 1 == preferred_confs[user_idx][0][1]:
                 pre_data4[1] += np.array(data4x4[conf_idx][user_idx])
             else:
                 pre_data4[2] += 0.5 * np.array(data4x4[conf_idx][user_idx])
-            if conf_idx + 1 == end_preferred_confs[user_idx][0]:
-                post_data4[1] += np.array(data4x4[conf_idx][user_idx])
-            else:
-                post_data4[2] += 0.5 * np.array(data4x4[conf_idx][user_idx])
 
 for conf_idx in range(len(data7x3)):
     """for each configuration"""
@@ -108,10 +123,6 @@ for conf_idx in range(len(data7x3)):
                 pre_data7[1] += np.array(data7x3[conf_idx][user_idx])
             else:
                 pre_data7[2] += 0.5 * np.array(data7x3[conf_idx][user_idx])
-            if conf_idx + 1 == end_preferred_confs[user_idx][1]:
-                post_data7[1] += np.array(data7x3[conf_idx][user_idx])
-            else:
-                post_data7[2] += 0.5 * np.array(data7x3[conf_idx][user_idx])
 
 post_data4 = [p / len(confs) for p in post_data4]
 pre_data4 = [p / len(confs) for p in pre_data4]
